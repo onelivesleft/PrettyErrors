@@ -1,6 +1,6 @@
-# Version 1.1
+# Version 1.2
 
-import sys, re, colorama, os
+import sys, re, colorama, os, time
 colorama.init()
 
 
@@ -13,12 +13,14 @@ FULL     = 2
 # Control variables; change to suit your preference
 LINE_LENGTH = 50
 FILENAME_DISPLAY = COMPACT
-DEFAULT     = "\033[02;37m"
+DISPLAY_TIMESTAMP = False
+SEPERATOR_CHARACTER = "-"
 SEPERATOR   = '\033[01;30m'
+DEFAULT     = "\033[02;37m"
+TIMESTAMP   = "\033[01;30m"
 FILENAME    = "\033[01;36m"
 LINE_NUMBER = "\033[01;32m"
 FUNCTION    = "\033[01;34m"
-
 
 PARTS = re.compile(r'.*File "(.*\.py)", line ([0-9]+), in (.*)')
 
@@ -31,7 +33,12 @@ class PrettyErrors():
         for arg in args:
             for line in arg.split("\n"):
                 if line.startswith("Traceback"):
-                    self.out("\n" + SEPERATOR + LINE_LENGTH * "-" + "\n")
+                    if DISPLAY_TIMESTAMP:
+                        timestamp = str(time.perf_counter())
+                        seperator = (LINE_LENGTH - len(timestamp)) * SEPERATOR_CHARACTER + timestamp
+                    else:
+                        seperator = LINE_LENGTH * SEPERATOR_CHARACTER
+                    self.out("\n" + SEPERATOR + seperator + "\n")
                 else:
                     line = line.replace('\\', '/')
                     parts = PARTS.match(line)
