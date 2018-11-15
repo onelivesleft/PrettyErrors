@@ -10,7 +10,11 @@ this means powershell, cmder, etc.
 If you want to configure the output then use `PrettyErrors.configure()`.  For example: 
 ```python
 import PrettyErrors
-PrettyErrors.configure(seperator_character = '—', line_length = 54, filename_display = PrettyErrors.FilenameDisplayMode.FULL)
+PrettyErrors.configure(
+  seperator_character = '—', 
+  line_length = 54, 
+  filename_display = PrettyErrors.FilenameDisplayMode.FULL
+)
 ```
 
 ![Example](https://github.com/onelivesleft/PrettyErrors/blob/master/example.png)
