@@ -1,3 +1,5 @@
 .ropeproject
 __pycache__
 build
+pretty_errors.egg-info
+dist
