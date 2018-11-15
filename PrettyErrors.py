@@ -42,7 +42,8 @@ class PrettyErrors():
                             filename = parts.group(1) + "\n"
                         elif FILENAME_DISPLAY == EXTENDED:
                             filename = parts.group(1)[-(LINE_LENGTH - len(line_number) - len(function) - 4):]
-                            if filename != parts.group(1): filename = "..." + filename + " "
+                            if filename != parts.group(1): filename = "..." + filename
+                            filename += " "
                         else:
                             filename = os.path.basename(parts.group(1)) + " "
                         self.out("\n")
