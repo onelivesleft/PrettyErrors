@@ -1,0 +1,7 @@
+README.md
+setup.py
+pretty_errors/__init__.py
+pretty_errors.egg-info/PKG-INFO
+pretty_errors.egg-info/SOURCES.txt
+pretty_errors.egg-info/dependency_links.txt
+pretty_errors.egg-info/top_level.txt

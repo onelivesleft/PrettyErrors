@@ -1,4 +1,4 @@
-# Version 1.3
+name = "pretty_errors"
 
 import sys, re, colorama, os, time
 from enum import Enum
@@ -12,7 +12,7 @@ class FilenameDisplayMode(Enum):
     FULL     = 2
 
 
-part_expression = re.compile(r'.*File "(.*\.py)", line ([0-9]+), in (.*)')
+part_expression = re.compile(r'.*File "([^"]*)", line ([0-9]+), in (.*)')
 
 
 class PrettyErrors():

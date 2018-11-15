@@ -1,0 +1,29 @@
+Metadata-Version: 2.1
+Name: pretty-errors
+Version: 1.0.1
+Summary: Prettifies Python exception output to make it legible.
+Home-page: https://github.com/onelivesleft/PrettyErrors/
+Author: Iain King
+Author-email: iain.king@gmail.com
+License: UNKNOWN
+Description: # PrettyErrors
+        
+        Prettifies Python exception output to make it legible. To use simply put PrettyErrors.py in your project and
+        ```python
+        import PrettyErrors
+        ```
+        Note you need to be running in a terminal capable of colour output in order to get colour output: in Windows
+        this means powershell, cmder, etc.
+        
+        If you want to configure the output then use `PrettyErrors.configure()`.  For example: ```python
+        import PrettyErrors
+        PrettyErrors.configure(seperator_character = 'â€”', line_length = 54, filename_display = PrettyErrors.FilenameDisplayMode.FULL)
+        ```
+        
+        ![Example](https://github.com/onelivesleft/PrettyErrors/blob/master/example.png)
+        
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Description-Content-Type: text/markdown
