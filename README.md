@@ -15,7 +15,11 @@ this means powershell, cmder, etc.
 If you want to configure the output then use `pretty_errors.configure()`.  For example: 
 ```python
 import pretty_errors
-pretty_errors.configure(seperator_character = '—', line_length = 54, filename_display = pretty_errors.FilenameDisplayMode.FULL)
+pretty_errors.configure(
+    seperator_character = '—', 
+    line_length = 54, 
+    filename_display = pretty_errors.FilenameDisplayMode.FULL
+)
 ```
-
+---
 ![Example](https://github.com/onelivesleft/PrettyErrors/blob/master/example.png)
