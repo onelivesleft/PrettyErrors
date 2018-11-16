@@ -54,8 +54,8 @@ class PrettyErrors():
 
     def write(self, *args):
         for arg in args:
-            for line in arg.split("\n"):
-                if line.startswith("Traceback"):
+            for line in arg.split('\n'):
+                if line.startswith('Traceback'):
                     if self._display_timestamp:
                         timestamp = str(time.perf_counter())
                         seperator = (self._line_length - len(timestamp)) * self._seperator_character + timestamp
@@ -75,7 +75,7 @@ class PrettyErrors():
                             wants_newline = True
                         elif self._filename_display == FilenameDisplayMode.EXTENDED:
                             filename = parts.group(1)[-(self._line_length - len(line_number) - len(function) - 4):]
-                            if filename != parts.group(1): filename = "..." + filename
+                            if filename != parts.group(1): filename = '...' + filename
                             filename += " "
                         else:
                             filename = os.path.basename(parts.group(1)) + " "
