@@ -52,3 +52,12 @@ Extract's location of exception.  If it returns `None` then text was not a locat
 
 `is_header(self, text)`
 Checks if text is the start of a traceback.
+
+
+For example, to change the header:
+```python
+def write_header(self):
+    self.output_text("\nERROR!!!!!!!!!!\n")
+
+sys.stderr.write_header = write_header
+```
