@@ -4,8 +4,10 @@ Prettifies Python exception output to make it legible. Install it with
 ```
 python -m pip install pretty-errors
 ```
-
-Then use it simply by importing it:
+---
+![Example](https://i.imgur.com/0jpEqob.png)
+---
+Use it simply by importing it:
 ```python
 import pretty_errors
 ```
@@ -21,9 +23,7 @@ pretty_errors.configure(
     filename_display = pretty_errors.FILENAME_FULL
 )
 ```
----
-![Example](https://i.imgur.com/0jpEqob.png)
----
+
 If you want to customize the output more than `configure` provides then you can replace the output functions
 on `sys.stderr` after importing pretty_errors.  These are:
 
