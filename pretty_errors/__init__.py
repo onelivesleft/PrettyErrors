@@ -35,6 +35,7 @@ class PrettyErrors():
                   filename_color = None, line_number_color = None, function_color = None):
         if line_length         is not None: self._line_length         = line_length
         if filename_display    is not None: self._filename_display    = filename_display
+        if full_line_newline   is not None: self._full_line_newline   = full_line_newline
         if display_timestamp   is not None: self._display_timestamp   = display_timestamp
         if seperator_character is not None: self._seperator_character = seperator_character
         if seperator_color     is not None: self._seperator_color     = seperator_color
