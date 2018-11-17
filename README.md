@@ -6,6 +6,7 @@ python -m pip install pretty-errors
 ```
 ---
 ![Example](https://i.imgur.com/0jpEqob.png)
+
 ---
 Use it simply by importing it:
 ```python
@@ -25,7 +26,9 @@ pretty_errors.configure(
 ```
 
 It is possible to have the interactive interpreter always use `pretty_errors`, instead of including it in your projects, by using the `PYTHONSTARTUP` environment variable.  Set it to a python file and that file will be run every time python is.  If you don't already have one then create a file with the above code block and set `PYTHONSTARTUP` to its path.  Whenever you run python interactively, `pretty_errors` will be automatically imported and configured (though this will not be true when your python code is run outwith the interactive interpreter.)
+
 ---
+
 Configuration settings:
 * `line_length` : Output will be wrapped at this point.  If this matches your console width you may want to disable `full_line_newline` in order to prevent apparent double newlines.
 * `full_line_newline` : Insert a hard newline even if the line is full.  Disable if the console automatically inserts its own newline at this point.
@@ -43,8 +46,7 @@ Configuration settings:
 If you want to customize the output more than `configure` provides then you can replace the output functions
 on `sys.stderr` after importing `pretty_errors`.  These are:
 
-`write_header(self)`
-
+####`write_header(self)`
 Is called at the start of a traceback.
 
 
