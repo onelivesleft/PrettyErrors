@@ -14,34 +14,24 @@ reset_color = '\033[m'
 
 class PrettyErrors():
     def __init__(self):
-        self._line_length         = 79
-        self._filename_display    = FILENAME_COMPACT
-        self._full_line_newline   = False
-        self._display_timestamp   = False
-        self._seperator_character = '-'
-        self._seperator_color     = '\033[1;30m'
-        self._timestamp_color     = '\033[1;30m'
-        self._default_color       = '\033[2;37m'
-        self._filename_color      = '\033[1;36m'
-        self._line_number_color   = '\033[1;32m'
-        self._function_color      = '\033[1;34m'
+        self.line_length         = 79
+        self.full_line_newline   = True
+        self.filename_display    = FILENAME_COMPACT
+        self.display_timestamp   = False
+        self.seperator_character = '-'
+        self.header_color        = '\033[1;30m'
+        self.timestamp_color     = '\033[1;30m'
+        self.default_color       = '\033[2;37m'
+        self.filename_color      = '\033[1;36m'
+        self.line_number_color   = '\033[1;32m'
+        self.function_color      = '\033[1;34m'
+        self.reset_stdout        = False
 
 
-    def configure(self, line_length = None, filename_display = None, full_line_newline = None, display_timestamp = None,
-                  seperator_character = None, seperator_color = None, default_color = None, timestamp_color = None,
-                  filename_color = None, line_number_color = None, function_color = None):
+    def configure(self, **kwargs):
         """Used to configure settings governing how exceptions are displayed."""
-        if line_length         is not None: self._line_length         = line_length
-        if filename_display    is not None: self._filename_display    = filename_display
-        if full_line_newline   is not None: self._full_line_newline   = full_line_newline
-        if display_timestamp   is not None: self._display_timestamp   = display_timestamp
-        if seperator_character is not None: self._seperator_character = seperator_character
-        if seperator_color     is not None: self._seperator_color     = seperator_color
-        if default_color       is not None: self._default_color       = default_color
-        if timestamp_color     is not None: self._timestamp_color     = timestamp_color
-        if filename_color      is not None: self._filename_color      = filename_color
-        if line_number_color   is not None: self._line_number_color   = line_number_color
-        if function_color      is not None: self._function_color      = function_color
+        for setting in kwargs:
+            if kwargs[setting] is not None: setattr(self, setting, kwargs[setting])
 
 
     def write(self, *args):
@@ -51,7 +41,6 @@ class PrettyErrors():
                 if self.is_header(line):
                     self.write_header()
                 else:
-                    line = line.replace('\\', '/')
                     location = self.get_location(line)
                     if location:
                         path, line_number, function = location
@@ -59,50 +48,52 @@ class PrettyErrors():
                     else:
                         self.write_body(line)
         sys.pretty_errors_stderr.write(reset_color)
+        if self.reset_stdout:
+            sys.stdout.write(reset_color)
 
 
     def write_header(self):
         """Writes a header at the start of a traceback"""
-        if self._display_timestamp:
-            timestamp = str(time.perf_counter())
-            seperator = (self._line_length - len(timestamp)) * self._seperator_character + timestamp
+        if self.display_timestamp:
+            timestamp = self.timestamp()
+            seperator = (self.line_length - len(timestamp)) * self.seperator_character + timestamp
         else:
-            seperator = self._line_length * self._seperator_character
+            seperator = self.line_length * self.seperator_character
         self.output_text('\n')
-        self.output_text([self._seperator_color, seperator], wants_newline = True)
+        self.output_text([self.header_color, seperator], wants_newline = True)
 
 
     def write_location(self, path, line_number, function):
         """Writes location of exception: file, line number and function"""
         line_number += " "
         self.output_text('\n')
-        if self._filename_display == FILENAME_FULL:
+        if self.filename_display == FILENAME_FULL:
             filename = ""
-            self.output_text([self._filename_color, path], wants_newline = True)
-            self.output_text([self._line_number_color, line_number, self._function_color, function], wants_newline = True)
+            self.output_text([self.filename_color, path], wants_newline = True)
+            self.output_text([self.line_number_color, line_number, self.function_color, function], wants_newline = True)
         else:
-            if self._filename_display == FILENAME_EXTENDED:
-                filename = path[-(self._line_length - len(line_number) - len(function) - 4):]
+            if self.filename_display == FILENAME_EXTENDED:
+                filename = path[-(self.line_length - len(line_number) - len(function) - 4):]
                 if filename != path:
                     filename = '...' + filename
                 filename += " "
             else:
                 filename = os.path.basename(path) + " "
-            self.output_text([self._filename_color,    filename,
-                              self._line_number_color, line_number,
-                              self._function_color,    function
+            self.output_text([self.filename_color,    filename,
+                              self.line_number_color, line_number,
+                              self.function_color,    function
                              ], wants_newline = True)
 
 
     def write_body(self, body):
         """Writes any text other than location identifier or traceback header."""
-        self.output_text(self._default_color)
+        self.output_text(self.default_color)
         body = body.strip()
-        while len(body) > self._line_length:
-            c = self._line_length - 1
+        while len(body) > self.line_length:
+            c = self.line_length - 1
             while c > 0 and body[c] not in (" ", "\t"):
                 c -= 1
-            if c == 0: c = self._line_length
+            if c == 0: c = self.line_length
             self.output_text(body[:c], wants_newline = True)
             body = body[c:].strip()
         if body:
@@ -118,7 +109,7 @@ class PrettyErrors():
             sys.pretty_errors_stderr.write(text)
             if not text.startswith('\033'):
                 count += len(text)
-        if wants_newline and (count % self._line_length != 0 or self._full_line_newline):
+        if wants_newline and (count == 0 or count % self.line_length or self.full_line_newline):
             sys.pretty_errors_stderr.write('\n')
 
 
@@ -136,14 +127,30 @@ class PrettyErrors():
         return text.startswith('Traceback')
 
 
+    def timestamp(self):
+        return str(time.perf_counter())
+
+
 if not getattr(sys, 'pretty_errors_stderr', False):
     sys.pretty_errors_stderr = sys.stderr
     sys.stderr = PrettyErrors()
 
 
 def configure(line_length = None, filename_display = None, full_line_newline = None, display_timestamp = None,
-              seperator_character = None, seperator_color = None, default_color = None, timestamp_color = None,
-              filename_color = None, line_number_color = None, function_color = None):
+              seperator_character = None, header_color = None, default_color = None, timestamp_color = None,
+              filename_color = None, line_number_color = None, function_color = None, reset_stdout = None):
     """Used to configure settings governing how exceptions are displayed."""
-    sys.stderr.configure(line_length, filename_display, full_line_newline, display_timestamp, seperator_character,
-                         seperator_color, default_color, timestamp_color, filename_color, line_number_color, function_color)
+    sys.stderr.configure(
+        line_length         = line_length,
+        filename_display    = filename_display,
+        full_line_newline   = full_line_newline,
+        display_timestamp   = display_timestamp,
+        seperator_character = seperator_character,
+        header_color        = header_color,
+        default_color       = default_color,
+        timestamp_color     = timestamp_color,
+        filename_color      = filename_color,
+        line_number_color   = line_number_color,
+        function_color      = function_color,
+        reset_stdout        = reset_stdout
+    )
