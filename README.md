@@ -23,6 +23,7 @@ pretty_errors.configure(
     filename_display = pretty_errors.FILENAME_FULL
 )
 ```
+
 It is possible to have the interactive interpreter always use `pretty_errors`, instead of including it in your projects, by using the `PYTHONSTARTUP` environment variable.  Set it to a python file and that file will be run every time python is.  If you don't already have one then create a file with the above code block and set `PYTHONSTARTUP` to its path.  Whenever you run python interactively, `pretty_errors` will be automatically imported and configured (though this will not be true when your python code is run outwith the interactive interpreter.)
 ---
 Configuration settings:
