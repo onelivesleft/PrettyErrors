@@ -83,21 +83,19 @@ When enabled the reset escape sequence will be written to stdout as well as stde
 If you want to customize the output more than `configure` provides then you can replace the output functions
 on `sys.stderr` after importing `pretty_errors`.  These are:
 
-#### `write_header(self)`
+* `write_header(self)`
+
 Is called at the start of a traceback.
 
-
-`timestamp(self)`
+* `timestamp(self)`
 
 Returns a string timestamp used in the header if `display_timestamp` is enabled.
 
-
-`write_location(self, path, line_number, function)`
+* `write_location(self, path, line_number, function)`
 
 Is called with details on the exception's location.
 
-
-`write_body(self, body)`
+* `write_body(self, body)`
 
 Is called with any other text sent to stderr (i.e. the code in question).  `body` will never contain `\n`, though
 it may be longer than the defined maximum line length.
@@ -106,8 +104,7 @@ it may be longer than the defined maximum line length.
 You may replace as many of these functions as you wish, or for maximum control of output you may replace the main
 method called with all stderr output:
 
-
-`write(self, *args)`
+* `write(self, *args)`
 
 Replacement for `sys.stderr.write`
 
@@ -115,18 +112,16 @@ Replacement for `sys.stderr.write`
 You may use these helper functions to make this easier (see `pretty_errors/__init__.py` for examples, especially `write`):
 
 
-`output_text(self, text, wants_newline = False)`
+* `output_text(self, text, wants_newline = False)`
 
 Outputs text while trying to only insert 1 newline when outputing a line of maximum length.  `text` should be a
 list of strings: colour escape codes and text data.
 
-
-`get_location(self, text)`
+* `get_location(self, text)`
 
 Extract's location of exception.  If it returns `None` then text was not a location identifier.
 
-
-`is_header(self, text)`
+* `is_header(self, text)`
 
 Checks if text is the start of a traceback.
 
