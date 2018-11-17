@@ -109,7 +109,7 @@ Checks if text is the start of a traceback.
 For example, to change the header:
 ```python
 def write_header(self):
-    self.output_text([self.header_color, "\nERROR!!!!!!!!!!"], wants_newline = True)
+    self.output_text([self.header_color, "\nERROR!!!!!!!!!!"], newline = True)
 
 sys.stderr.write_header = write_header
 ```
