@@ -46,7 +46,7 @@ Configuration settings:
 If you want to customize the output more than `configure` provides then you can replace the output functions
 on `sys.stderr` after importing `pretty_errors`.  These are:
 
-####`write_header(self)`
+###`write_header(self)`
 Is called at the start of a traceback.
 
 
