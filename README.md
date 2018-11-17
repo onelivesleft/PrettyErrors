@@ -37,7 +37,7 @@ Output will be wrapped at this point.  If this matches your console width you ma
 Insert a hard newline even if the line is full.  Disable if the console automatically inserts its own newline at this point.
 
 * `filename_display`<br>
-How the filename is displayed: may be `FILENAME_COMPACT`, `FILENAME_EXTENDED`, or `FILENAME_FULL`
+How the filename is displayed: may be `pretty_errors.FILENAME_COMPACT`, `pretty_errors.FILENAME_EXTENDED`, or `pretty_errors.FILENAME_FULL`
 
 * `display_timestamp`<br>
 When enabled a timestamp is written in the traceback header.
