@@ -51,19 +51,19 @@ Escape sequence to set header color.
 * `timestamp_color`<br>
 Escape sequence to set timestamp color.
 
-* `default_color`<br> 
+* `default_color`<br>
 Escape sequence to set default color.
 
 * `filename_color`<br>
 Escape sequence to set filename color.
 
-* `line_number_color`<br> 
+* `line_number_color`<br>
 Escape sequence to set line number color.
 
-* `function_color`<br> 
+* `function_color`<br>
 Escape sequence to set function color.
 
-* `reset_stdout`<br> 
+* `reset_stdout`<br>
 When enabled the reset escape sequence will be written to stdout as well as stderr; turn this on if your console is being left with the wrong color.
 
 ---
@@ -100,7 +100,7 @@ Outputs text while trying to only insert 1 newline when outputing a line of maxi
 list of strings: colour escape codes and text data.
 
 * `get_location(self, text)`<br>
-Extract's location of exception.  If it returns `None` then text was not a location identifier.
+Extracts location of exception.  If it returns `None` then text was not a location identifier.
 
 * `is_header(self, text)`<br>
 Checks if text is the start of a traceback.
