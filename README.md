@@ -30,8 +30,12 @@ It is possible to have the interactive interpreter always use `pretty_errors`, i
 ---
 
 Configuration settings:
-* `line_length` : Output will be wrapped at this point.  If this matches your console width you may want to disable `full_line_newline` in order to prevent apparent double newlines.
-* `full_line_newline` : Insert a hard newline even if the line is full.  Disable if the console automatically inserts its own newline at this point.
+* `line_length`
+
+Output will be wrapped at this point.  If this matches your console width you may want to disable `full_line_newline` in order to prevent apparent double newlines.
+* `full_line_newline`
+
+Insert a hard newline even if the line is full.  Disable if the console automatically inserts its own newline at this point.
 * `filename_display` : How the filename is displayed: may be `FILENAME_COMPACT`, `FILENAME_EXTENDED`, or `FILENAME_FULL`
 * `display_timestamp` : When enabled a timestamp is written in the traceback header.
 * `seperator_character` : Character used to create the header line.  Hyphen is used by default.
