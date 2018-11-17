@@ -12,6 +12,7 @@ FILENAME_FULL     = 2
 location_expression = re.compile(r'.*File "([^"]*)", line ([0-9]+), in (.*)')
 reset_color = '\033[m'
 
+
 class PrettyErrors():
     def __init__(self):
         self.line_length         = 79
