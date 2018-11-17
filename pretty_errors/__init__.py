@@ -10,7 +10,7 @@ FILENAME_EXTENDED = 1
 FILENAME_FULL     = 2
 
 location_expression = re.compile(r'.*File "([^"]*)", line ([0-9]+), in (.*)')
-
+reset_color = '\033[m'
 
 class PrettyErrors():
     def __init__(self):
@@ -19,12 +19,12 @@ class PrettyErrors():
         self._full_line_newline   = False
         self._display_timestamp   = False
         self._seperator_character = '-'
-        self._seperator_color     = '\033[01;30m'
-        self._timestamp_color     = '\033[01;30m'
-        self._default_color       = '\033[02;37m'
-        self._filename_color      = '\033[01;36m'
-        self._line_number_color   = '\033[01;32m'
-        self._function_color      = '\033[01;34m'
+        self._seperator_color     = '\033[1;30m'
+        self._timestamp_color     = '\033[1;30m'
+        self._default_color       = '\033[2;37m'
+        self._filename_color      = '\033[1;36m'
+        self._line_number_color   = '\033[1;32m'
+        self._function_color      = '\033[1;34m'
 
 
     def configure(self, line_length = None, filename_display = None, full_line_newline = None, display_timestamp = None,
@@ -58,6 +58,7 @@ class PrettyErrors():
                         self.write_location(path, line_number, function)
                     else:
                         self.write_body(line)
+        sys.pretty_errors_stderr.write(reset_color)
 
 
     def write_header(self):
@@ -68,26 +69,29 @@ class PrettyErrors():
         else:
             seperator = self._line_length * self._seperator_character
         self.output_text('\n')
-        self.output_text(self._seperator_color + seperator, wants_newline = True)
+        self.output_text([self._seperator_color, seperator], wants_newline = True)
 
 
     def write_location(self, path, line_number, function):
         """Writes location of exception: file, line number and function"""
         line_number += " "
-        wants_newline = False
-        if self._filename_display == FILENAME_FULL:
-            filename = path
-            wants_newline = True
-        elif self._filename_display == FILENAME_EXTENDED:
-            filename = path[-(self._line_length - len(line_number) - len(function) - 4):]
-            if filename != path: filename = '...' + filename
-            filename += " "
-        else:
-            filename = os.path.basename(path) + " "
         self.output_text('\n')
-        self.output_text(self._filename_color    + filename, wants_newline = wants_newline)
-        self.output_text(self._line_number_color + line_number)
-        self.output_text(self._function_color    + function, wants_newline = True)
+        if self._filename_display == FILENAME_FULL:
+            filename = ""
+            self.output_text([self._filename_color, path], wants_newline = True)
+            self.output_text([self._line_number_color, line_number, self._function_color, function], wants_newline = True)
+        else:
+            if self._filename_display == FILENAME_EXTENDED:
+                filename = path[-(self._line_length - len(line_number) - len(function) - 4):]
+                if filename != path:
+                    filename = '...' + filename
+                filename += " "
+            else:
+                filename = os.path.basename(path) + " "
+            self.output_text([self._filename_color,    filename,
+                              self._line_number_color, line_number,
+                              self._function_color,    function
+                             ], wants_newline = True)
 
 
     def write_body(self, body):
@@ -105,10 +109,16 @@ class PrettyErrors():
             self.output_text(body, wants_newline = True)
 
 
-    def output_text(self, text, wants_newline = False):
+    def output_text(self, texts, wants_newline = False):
         """Helper function to output text while trying to only insert 1 newline when outputing a line of maximum length."""
-        sys.pretty_errors_stderr.write(text)
-        if wants_newline and (len(text) < self._line_length or self._full_line_newline):
+        if not isinstance(texts, (list, tuple)):
+            texts = [texts]
+        count = 0
+        for text in texts:
+            sys.pretty_errors_stderr.write(text)
+            if not text.startswith('\033'):
+                count += len(text)
+        if wants_newline and (count % self._line_length != 0 or self._full_line_newline):
             sys.pretty_errors_stderr.write('\n')
 
 
