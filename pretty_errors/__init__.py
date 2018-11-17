@@ -60,7 +60,7 @@ class PrettyErrors():
         else:
             seperator = self.line_length * self.seperator_character
         self.output_text('\n')
-        self.output_text([self.header_color, seperator], wants_newline = True)
+        self.output_text([self.header_color, seperator], newline = True)
 
 
     def write_location(self, path, line_number, function):
@@ -69,8 +69,8 @@ class PrettyErrors():
         self.output_text('\n')
         if self.filename_display == FILENAME_FULL:
             filename = ""
-            self.output_text([self.filename_color, path], wants_newline = True)
-            self.output_text([self.line_number_color, line_number, self.function_color, function], wants_newline = True)
+            self.output_text([self.filename_color, path], newline = True)
+            self.output_text([self.line_number_color, line_number, self.function_color, function], newline = True)
         else:
             if self.filename_display == FILENAME_EXTENDED:
                 filename = path[-(self.line_length - len(line_number) - len(function) - 4):]
@@ -82,7 +82,7 @@ class PrettyErrors():
             self.output_text([self.filename_color,    filename,
                               self.line_number_color, line_number,
                               self.function_color,    function
-                             ], wants_newline = True)
+                             ], newline = True)
 
 
     def write_body(self, body):
@@ -94,13 +94,13 @@ class PrettyErrors():
             while c > 0 and body[c] not in (" ", "\t"):
                 c -= 1
             if c == 0: c = self.line_length
-            self.output_text(body[:c], wants_newline = True)
+            self.output_text(body[:c], newline = True)
             body = body[c:].strip()
         if body:
-            self.output_text(body, wants_newline = True)
+            self.output_text(body, newline = True)
 
 
-    def output_text(self, texts, wants_newline = False):
+    def output_text(self, texts, newline = False):
         """Helper function to output text while trying to only insert 1 newline when outputing a line of maximum length."""
         if not isinstance(texts, (list, tuple)):
             texts = [texts]
@@ -109,7 +109,7 @@ class PrettyErrors():
             sys.pretty_errors_stderr.write(text)
             if not text.startswith('\033'):
                 count += len(text)
-        if wants_newline and (count == 0 or count % self.line_length or self.full_line_newline):
+        if newline and (count == 0 or count % self.line_length or self.full_line_newline):
             sys.pretty_errors_stderr.write('\n')
 
 
