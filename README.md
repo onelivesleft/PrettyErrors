@@ -29,24 +29,57 @@ It is possible to have the interactive interpreter always use `pretty_errors`, i
 
 ---
 
-Configuration settings:
+##### Configuration settings:
 * `line_length`
 
 Output will be wrapped at this point.  If this matches your console width you may want to disable `full_line_newline` in order to prevent apparent double newlines.
+
 * `full_line_newline`
 
 Insert a hard newline even if the line is full.  Disable if the console automatically inserts its own newline at this point.
-* `filename_display` : How the filename is displayed: may be `FILENAME_COMPACT`, `FILENAME_EXTENDED`, or `FILENAME_FULL`
-* `display_timestamp` : When enabled a timestamp is written in the traceback header.
-* `seperator_character` : Character used to create the header line.  Hyphen is used by default.
-* `header_color` : Escape sequence to set header color.
-* `timestamp_color` : Escape sequence to set timestamp color.
-* `default_color` : Escape sequence to set default color.
-* `filename_color` : Escape sequence to set filename color.
-* `line_number_color` : Escape sequence to set line number color.
-* `function_color` : Escape sequence to set function color.
-* `reset_stdout` : When enabled the reset escape sequence will be written to stdout as well as stderr; turn this on if your console is being left with the wrong color.
+
+* `filename_display`
+
+How the filename is displayed: may be `FILENAME_COMPACT`, `FILENAME_EXTENDED`, or `FILENAME_FULL`
+
+* `display_timestamp`
+
+When enabled a timestamp is written in the traceback header.
+
+* `seperator_character`
+
+Character used to create the header line.  Hyphen is used by default.
+
+* `header_color`
+
+Escape sequence to set header color.
+
+* `timestamp_color` 
+
+Escape sequence to set timestamp color.
+
+* `default_color` 
+
+Escape sequence to set default color.
+
+* `filename_color`
+
+Escape sequence to set filename color.
+
+* `line_number_color` 
+
+Escape sequence to set line number color.
+
+* `function_color` 
+
+Escape sequence to set function color.
+
+* `reset_stdout` 
+
+When enabled the reset escape sequence will be written to stdout as well as stderr; turn this on if your console is being left with the wrong color.
+
 ---
+
 If you want to customize the output more than `configure` provides then you can replace the output functions
 on `sys.stderr` after importing `pretty_errors`.  These are:
 
