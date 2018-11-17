@@ -31,8 +31,7 @@ It is possible to have the interactive interpreter always use `pretty_errors`, i
 
 ##### Configuration settings:
 * `line_length`
-
-Output will be wrapped at this point.  If this matches your console width you may want to disable `full_line_newline` in order to prevent apparent double newlines.
+** Output will be wrapped at this point.  If this matches your console width you may want to disable `full_line_newline` in order to prevent apparent double newlines.
 
 * `full_line_newline`
 
