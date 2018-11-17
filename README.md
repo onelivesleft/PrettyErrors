@@ -30,50 +30,40 @@ It is possible to have the interactive interpreter always use `pretty_errors`, i
 ---
 
 ##### Configuration settings:
-* `line_length`<br>Output will be wrapped at this point.  If this matches your console width you may want to disable `full_line_newline` in order to prevent apparent double newlines.
+* `line_length`<br>
+Output will be wrapped at this point.  If this matches your console width you may want to disable `full_line_newline` in order to prevent apparent double newlines.
 
-* `full_line_newline`
-
+* `full_line_newline`<br>
 Insert a hard newline even if the line is full.  Disable if the console automatically inserts its own newline at this point.
 
-* `filename_display`
-
+* `filename_display`<br>
 How the filename is displayed: may be `FILENAME_COMPACT`, `FILENAME_EXTENDED`, or `FILENAME_FULL`
 
-* `display_timestamp`
-
+* `display_timestamp`<br>
 When enabled a timestamp is written in the traceback header.
 
-* `seperator_character`
-
+* `seperator_character`<br>
 Character used to create the header line.  Hyphen is used by default.
 
-* `header_color`
-
+* `header_color`<br>
 Escape sequence to set header color.
 
-* `timestamp_color` 
-
+* `timestamp_color`<br>
 Escape sequence to set timestamp color.
 
-* `default_color` 
-
+* `default_color`<br> 
 Escape sequence to set default color.
 
-* `filename_color`
-
+* `filename_color`<br>
 Escape sequence to set filename color.
 
-* `line_number_color` 
-
+* `line_number_color`<br> 
 Escape sequence to set line number color.
 
-* `function_color` 
-
+* `function_color`<br> 
 Escape sequence to set function color.
 
-* `reset_stdout` 
-
+* `reset_stdout`<br> 
 When enabled the reset escape sequence will be written to stdout as well as stderr; turn this on if your console is being left with the wrong color.
 
 ---
@@ -81,20 +71,16 @@ When enabled the reset escape sequence will be written to stdout as well as stde
 If you want to customize the output more than `configure` provides then you can replace the output functions
 on `sys.stderr` after importing `pretty_errors`.  These are:
 
-* `write_header(self)`
-
+* `write_header(self)`<br>
 Is called at the start of a traceback.
 
-* `timestamp(self)`
-
+* `timestamp(self)`<br>
 Returns a string timestamp used in the header if `display_timestamp` is enabled.
 
-* `write_location(self, path, line_number, function)`
-
+* `write_location(self, path, line_number, function)`<br>
 Is called with details on the exception's location.
 
-* `write_body(self, body)`
-
+* `write_body(self, body)`<br>
 Is called with any other text sent to stderr (i.e. the code in question).  `body` will never contain `\n`, though
 it may be longer than the defined maximum line length.
 
@@ -102,25 +88,21 @@ it may be longer than the defined maximum line length.
 You may replace as many of these functions as you wish, or for maximum control of output you may replace the main
 method called with all stderr output:
 
-* `write(self, *args)`
-
+* `write(self, *args)`<br>
 Replacement for `sys.stderr.write`
 
 
 You may use these helper functions to make this easier (see `pretty_errors/__init__.py` for examples, especially `write`):
 
 
-* `output_text(self, text, wants_newline = False)`
-
+* `output_text(self, text, wants_newline = False)`<br>
 Outputs text while trying to only insert 1 newline when outputing a line of maximum length.  `text` should be a
 list of strings: colour escape codes and text data.
 
-* `get_location(self, text)`
-
+* `get_location(self, text)`<br>
 Extract's location of exception.  If it returns `None` then text was not a location identifier.
 
-* `is_header(self, text)`
-
+* `is_header(self, text)`<br>
 Checks if text is the start of a traceback.
 
 
