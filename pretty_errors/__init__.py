@@ -1,9 +1,8 @@
-name = "pretty_errors"
-
 import sys, re, colorama, os, time
-
 colorama.init()
 
+
+name = "pretty_errors"
 
 FILENAME_COMPACT  = 0
 FILENAME_EXTENDED = 1
@@ -19,6 +18,7 @@ class PrettyErrors():
         self.full_line_newline   = True
         self.filename_display    = FILENAME_COMPACT
         self.display_timestamp   = False
+        self.write_link          = False
         self.seperator_character = '-'
         self.header_color        = '\033[1;30m'
         self.timestamp_color     = '\033[1;30m'
@@ -26,6 +26,7 @@ class PrettyErrors():
         self.filename_color      = '\033[1;36m'
         self.line_number_color   = '\033[1;32m'
         self.function_color      = '\033[1;34m'
+        self.link_color          = '\033[1;30m'
         self.reset_stdout        = False
 
 
@@ -38,16 +39,19 @@ class PrettyErrors():
     def write(self, *args):
         """Replaces sys.stderr.write, outputing pretty errors."""
         for arg in args:
-            for line in arg.split('\n'):
-                if self.is_header(line):
-                    self.write_header()
-                else:
-                    location = self.get_location(line)
-                    if location:
-                        path, line_number, function = location
-                        self.write_location(path, line_number, function)
+            if arg == "\n":
+                self.write_body("\n")
+            else:
+                for line in arg.split('\n'):
+                    if self.is_header(line):
+                        self.write_header()
                     else:
-                        self.write_body(line)
+                        location = self.get_location(line)
+                        if location:
+                            path, line_number, function = location
+                            self.write_location(path, line_number, function)
+                        else:
+                            self.write_body(line)
         sys.pretty_errors_stderr.write(reset_color)
         if self.reset_stdout:
             sys.stdout.write(reset_color)
@@ -80,25 +84,31 @@ class PrettyErrors():
                 filename += " "
             else:
                 filename = os.path.basename(path) + " "
-            self.output_text([self.filename_color,    filename,
-                              self.line_number_color, line_number,
-                              self.function_color,    function
-                             ], newline = True)
+            self.output_text([
+                self.filename_color,    filename,
+                self.line_number_color, line_number,
+                self.function_color,    function
+            ], newline = True)
+        if self.write_link:
+            self.output_text([self.link_color, '"%s", line %s' % (path, line_number)], newline = True)
 
 
     def write_body(self, body):
         """Writes any text other than location identifier or traceback header."""
         self.output_text(self.default_color)
+        if body == "\n":
+            self.output_text("\n")
+            return
         body = body.strip()
         while len(body) > self.line_length:
             c = self.line_length - 1
             while c > 0 and body[c] not in (" ", "\t"):
                 c -= 1
             if c == 0: c = self.line_length
-            self.output_text(body[:c], newline = True)
+            self.output_text(body[:c], newline = False)
             body = body[c:].strip()
         if body:
-            self.output_text(body, newline = True)
+            self.output_text(body, newline = False)
 
 
     def output_text(self, texts, newline = False):
@@ -138,14 +148,15 @@ if not getattr(sys, 'pretty_errors_stderr', False):
 
 
 def configure(line_length = None, filename_display = None, full_line_newline = None, display_timestamp = None,
-              seperator_character = None, header_color = None, default_color = None, timestamp_color = None,
-              filename_color = None, line_number_color = None, function_color = None, reset_stdout = None):
+              write_link = None, seperator_character = None, header_color = None, default_color = None, timestamp_color = None,
+              filename_color = None, line_number_color = None, function_color = None, link_color = None, reset_stdout = None):
     """Used to configure settings governing how exceptions are displayed."""
     sys.stderr.configure(
         line_length         = line_length,
         filename_display    = filename_display,
         full_line_newline   = full_line_newline,
         display_timestamp   = display_timestamp,
+        write_link          = write_link,
         seperator_character = seperator_character,
         header_color        = header_color,
         default_color       = default_color,
@@ -153,5 +164,6 @@ def configure(line_length = None, filename_display = None, full_line_newline = N
         filename_color      = filename_color,
         line_number_color   = line_number_color,
         function_color      = function_color,
+        link_color          = link_color,
         reset_stdout        = reset_stdout
     )

@@ -42,6 +42,9 @@ How the filename is displayed: may be `pretty_errors.FILENAME_COMPACT`, `pretty_
 * `display_timestamp`<br>
 When enabled a timestamp is written in the traceback header.
 
+* `write_link`<br>
+When enabled a link is written below the error location, which VSCode will allow you to click on.
+
 * `seperator_character`<br>
 Character used to create the header line.  Hyphen is used by default.
 
@@ -62,6 +65,9 @@ Escape sequence to set line number color.
 
 * `function_color`<br>
 Escape sequence to set function color.
+
+* `link_color`<br>
+Escape sequence to set link color.
 
 * `reset_stdout`<br>
 When enabled the reset escape sequence will be written to stdout as well as stderr; turn this on if your console is being left with the wrong color.
@@ -95,7 +101,7 @@ Replacement for `sys.stderr.write`
 You may use these helper functions to make this easier (see `pretty_errors/__init__.py` for examples, especially `write`):
 
 
-* `output_text(self, text, wants_newline = False)`<br>
+* `output_text(self, text, newline = False)`<br>
 Outputs text while trying to only insert 1 newline when outputing a line of maximum length.  `text` should be a
 list of strings: colour escape codes and text data.
 
