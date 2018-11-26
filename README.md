@@ -42,7 +42,7 @@ How the filename is displayed: may be `pretty_errors.FILENAME_COMPACT`, `pretty_
 * `display_timestamp`<br>
 When enabled a timestamp is written in the traceback header.
 
-* `write_link`<br>
+* `display_link`<br>
 When enabled a link is written below the error location, which VSCode will allow you to click on.
 
 * `seperator_character`<br>

@@ -18,7 +18,7 @@ class PrettyErrors():
         self.full_line_newline   = True
         self.filename_display    = FILENAME_COMPACT
         self.display_timestamp   = False
-        self.write_link          = False
+        self.display_link        = False
         self.seperator_character = '-'
         self.header_color        = '\033[1;30m'
         self.timestamp_color     = '\033[1;30m'
@@ -89,7 +89,7 @@ class PrettyErrors():
                 self.line_number_color, line_number,
                 self.function_color,    function
             ], newline = True)
-        if self.write_link:
+        if self.display_link:
             self.output_text([self.link_color, '"%s", line %s' % (path, line_number)], newline = True)
 
 
@@ -148,7 +148,7 @@ if not getattr(sys, 'pretty_errors_stderr', False):
 
 
 def configure(line_length = None, filename_display = None, full_line_newline = None, display_timestamp = None,
-              write_link = None, seperator_character = None, header_color = None, default_color = None, timestamp_color = None,
+              display_link = None, seperator_character = None, header_color = None, default_color = None, timestamp_color = None,
               filename_color = None, line_number_color = None, function_color = None, link_color = None, reset_stdout = None):
     """Used to configure settings governing how exceptions are displayed."""
     sys.stderr.configure(
@@ -156,7 +156,7 @@ def configure(line_length = None, filename_display = None, full_line_newline = N
         filename_display    = filename_display,
         full_line_newline   = full_line_newline,
         display_timestamp   = display_timestamp,
-        write_link          = write_link,
+        display_link        = display_link,
         seperator_character = seperator_character,
         header_color        = header_color,
         default_color       = default_color,
