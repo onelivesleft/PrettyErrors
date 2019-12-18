@@ -42,6 +42,8 @@ class PrettyErrorsConfig():
         self.prefix                 = None
         self.infix                  = None
         self.postfix                = None
+        self.whitelist_paths        = []
+        self.blacklist_paths        = []
         self.reset_stdout           = False
 
 
@@ -97,6 +99,20 @@ def configure(line_length = None, filename_display = None, full_line_newline = N
         stack_depth            = stack_depth,
         reset_stdout           = reset_stdout
     )
+
+
+def whitelist(*paths):
+    """If the whitelist has any entries, then only files which begin with
+    one of its entries will be included in the stack trace"""
+    for path in paths:
+        config.whitelist_paths.append(os.path.normpath(path).lower())
+
+
+def blacklist(*paths):
+    """Files which begin with a path on the blacklist will not be
+    included in the stack trace."""
+    for path in paths:
+        config.blacklist_paths.append(os.path.normpath(path).lower())
 
 
 
@@ -240,7 +256,20 @@ def excepthook(exception_type, exception_value, traceback):
 
     tracebacks = []
     while traceback != None:
-        tracebacks.append(traceback)
+        path = os.path.normpath(traceback.tb_frame.f_code.co_filename).lower()
+        if config.whitelist_paths and traceback.tb_next:
+            for white in config.whitelist_paths:
+                if path.startswith(white): break
+            else:
+                traceback = traceback.tb_next
+                continue
+        if traceback.tb_next == None:
+            tracebacks.append(traceback)
+        else:
+            for black in config.blacklist_paths:
+                if path.startswith(black): break
+            else:
+                tracebacks.append(traceback)
         traceback = traceback.tb_next
 
     if config.top_first:
@@ -275,6 +304,7 @@ sys.excepthook = excepthook
 
 
 if __name__ == "__main__":
-    configure(line_number_first = False, filename_display=FILENAME_EXTENDED)
-    raise KeyError#("foo", 1)
+    configure(line_number_first = False, filename_display=FILENAME_FULL)
+    blacklist("c:/")
+    raise KeyError("foo", 1)
         #test
