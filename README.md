@@ -33,10 +33,10 @@ It is possible to have the interactive interpreter always use `pretty_errors`, i
 ##### Configuration settings:
 
 * `line_length`<br>
-Output will be wrapped at this point.  If this matches your console width you may want to disable `full_line_newline` in order to prevent apparent double newlines.  If set to `0` (which is the default) it will automatically match your console width.
+Output will be wrapped at this point.  If set to `0` (which is the default) it will automatically match your console width.
 
 * `full_line_newline`<br>
-Insert a hard newline even if the line is full.  Disable if the console automatically inserts its own newline at this point.
+Insert a hard newline even if the line is full.  If `line_length` is the same as your console width and this is enabled then you will see double newlines where unwanted, so usually you would only set this if they are different.
 
 * `filename_display`<br>
 How the filename is displayed: may be `pretty_errors.FILENAME_COMPACT`, `pretty_errors.FILENAME_EXTENDED`, or `pretty_errors.FILENAME_FULL`
@@ -57,7 +57,7 @@ When enabled the exception is displayed below the stack trace.
 When enabled the stack trace will be reversed, displaying the top of the stack first.
 
 * `stack_depth`<br>
-The maximum number of entries from the stack trace to display.  When `0` willb display the entire stack, which is the default.
+The maximum number of entries from the stack trace to display.  When `0` will display the entire stack, which is the default.
 
 * `lines_before`, `lines_after`<br>
 How many lines of code to display for the top frame, before and after the line the exception occurred on.
