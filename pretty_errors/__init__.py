@@ -103,9 +103,17 @@ def configure(line_length = None, filename_display = None, full_line_newline = N
 def excepthook(exception_type, exception_value, traceback):
     "Replaces sys.excepthook to output pretty errors."
 
+
+    def get_terminal_width():
+        try:
+            return os.get_terminal_size()[0]
+        except Exception:
+            return 79
+
+
     def get_line_length():
         if config.line_length == 0:
-            return os.get_terminal_size()[0]
+            return get_terminal_width()
         else:
             return config.line_length
 
@@ -139,7 +147,7 @@ def excepthook(exception_type, exception_value, traceback):
 
 
     def write_location(path, line, function):
-        line_number = f'{line} '
+        line_number = str(line) + ' '
         output_text('\n')
         if config.filename_display == FILENAME_FULL:
             filename = ""
