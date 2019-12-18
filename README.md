@@ -27,7 +27,13 @@ pretty_errors.configure(
 pretty_errors.blacklist('c:/python')
 ```
 
-It is possible to have the interactive interpreter always use `pretty_errors`, instead of including it in your projects, by using the `PYTHONSTARTUP` environment variable.  Set it to a python file and that file will be run every time python is.  If you don't already have one then create a file with the above code block and set `PYTHONSTARTUP` to its path.  Whenever you run python interactively, `pretty_errors` will be automatically imported and configured (though this will not be true when your python code is run outwith the interactive interpreter.)
+---
+
+If you want `pretty-errors` to be run whenever you run a python program, without having to `import` it manually, then you can add it to your `sitecustomize.py`:
+
+1. Run `python -m site` and look for the `USER_SITE` entry.
+2. In that folder create file `sitecustomize.py`, if it does not exist.
+3. Add `import pretty_errors` to that file, plus whatever config calls you want.
 
 ---
 

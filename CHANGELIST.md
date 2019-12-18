@@ -1,3 +1,8 @@
+# v1.1.7
+
+* Site customize instructions.
+
+
 # v1.1.6
 
 * Added config options `display_locals`, `display_trace_locals`, `local_name_color`, `local_value_color`
