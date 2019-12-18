@@ -53,6 +53,9 @@ When enabled the exception is displayed above the stack trace.
 * `exception_below`<br>
 When enabled the exception is displayed below the stack trace.
 
+* `line_number_first`<br>
+When enabled the line number will be displayed first, rather than the filename.
+
 * `top_first`<br>
 When enabled the stack trace will be reversed, displaying the top of the stack first.
 

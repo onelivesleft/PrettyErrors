@@ -20,6 +20,7 @@ class PrettyErrorsConfig():
         self.display_timestamp      = False
         self.display_link           = False
         self.seperator_character    = '-'
+        self.line_number_first      = False
         self.top_first              = False
         self.stack_depth            = 0
         self.exception_above        = False
@@ -62,7 +63,7 @@ def configure(line_length = None, filename_display = None, full_line_newline = N
               prefix = None, infix = None, postfix = None,
               trace_lines_before = None, trace_lines_after = None,
               lines_before = None, lines_after = None,
-              top_first = None, stack_depth = None,
+              top_first = None, stack_depth = None, line_number_first = None,
               exception_above = None, exception_below = None, reset_stdout = None):
     """Used to configure settings governing how exceptions are displayed."""
     config.configure(
@@ -92,6 +93,7 @@ def configure(line_length = None, filename_display = None, full_line_newline = N
         lines_before           = lines_before,
         lines_after            = lines_after,
         top_first              = top_first,
+        line_number_first      = line_number_first,
         stack_depth            = stack_depth,
         reset_stdout           = reset_stdout
     )
@@ -149,14 +151,20 @@ def excepthook(exception_type, exception_value, traceback):
                 filename = path[-(line_length - len(line_number) - len(function) - 4):]
                 if filename != path:
                     filename = '...' + filename
-                filename += " "
             else:
-                filename = os.path.basename(path) + ' '
-            output_text([
-                config.filename_color,    filename,
-                config.line_number_color, line_number,
-                config.function_color,    function
-            ], newline = True)
+                filename = os.path.basename(path)
+            if config.line_number_first:
+                output_text([
+                    config.line_number_color, line_number,
+                    config.function_color,    function + ' ',
+                    config.filename_color,    filename
+                ], newline = True)
+            else:
+                output_text([
+                    config.filename_color,    filename + ' ',
+                    config.line_number_color, line_number,
+                    config.function_color,    function
+                ], newline = True)
         if config.display_link:
             output_text([config.link_color, '"%s", line %s' % (path, line)], newline = True)
 
@@ -259,6 +267,6 @@ sys.excepthook = excepthook
 
 
 if __name__ == "__main__":
-    configure()
+    configure(line_number_first = False, filename_display=FILENAME_EXTENDED)
     raise KeyError#("foo", 1)
         #test
