@@ -19,9 +19,10 @@ If you want to configure the output then use `pretty_errors.configure()`.  For e
 ```python
 import pretty_errors
 pretty_errors.configure(
-    seperator_character = '—',
-    line_length = 54,
-    filename_display = pretty_errors.FILENAME_FULL
+    seperator_character = '*',
+    filename_display = pretty_errors.FILENAME_FULL,
+    lines_before = 2,
+    lines_after = 1
 )
 ```
 
@@ -30,8 +31,9 @@ It is possible to have the interactive interpreter always use `pretty_errors`, i
 ---
 
 ##### Configuration settings:
+
 * `line_length`<br>
-Output will be wrapped at this point.  If this matches your console width you may want to disable `full_line_newline` in order to prevent apparent double newlines.
+Output will be wrapped at this point.  If this matches your console width you may want to disable `full_line_newline` in order to prevent apparent double newlines.  If set to `0` (which is the default) it will automatically match your console width.
 
 * `full_line_newline`<br>
 Insert a hard newline even if the line is full.  Disable if the console automatically inserts its own newline at this point.
@@ -45,8 +47,35 @@ When enabled a timestamp is written in the traceback header.
 * `display_link`<br>
 When enabled a link is written below the error location, which VSCode will allow you to click on.
 
+* `exception_above`<br>
+When enabled the exception is displayed above the stack trace.
+
+* `exception_below`<br>
+When enabled the exception is displayed below the stack trace.
+
+* `top_first`<br>
+When enabled the stack trace will be reversed, displaying the top of the stack first.
+
+* `stack_depth`<br>
+The maximum number of entries from the stack trace to display.  When `0` willb display the entire stack, which is the default.
+
+* `lines_before`, `lines_after`<br>
+How many lines of code to display for the top frame, before and after the line the exception occurred on.
+
+* `trace_lines_before`, `trace_lines_after`<br>
+How many lines of code to display for each other frame in the stack trace, before and after the line the exception occurred on.
+
 * `seperator_character`<br>
 Character used to create the header line.  Hyphen is used by default.
+
+* `prefix`<br>
+Text string which is displayed at the top of the report, just below the header.
+
+* `Infix`<br>
+Text string which is displayed between each frame of the stack.
+
+* `Postfix`<br>
+Text string which is displayed at the bottom of the exception report.
 
 * `header_color`<br>
 Escape sequence to set header color.
@@ -54,8 +83,11 @@ Escape sequence to set header color.
 * `timestamp_color`<br>
 Escape sequence to set timestamp color.
 
-* `default_color`<br>
-Escape sequence to set default color.
+* `line_color`<br>
+Escape sequence to set the color of the line of code which caused the exception.
+
+* `code_color`<br>
+Escape sequence to set the color of other displayed lines of code.
 
 * `filename_color`<br>
 Escape sequence to set filename color.
@@ -66,56 +98,14 @@ Escape sequence to set line number color.
 * `function_color`<br>
 Escape sequence to set function color.
 
+* `exception_color`<br>
+Escape sequence to set exception color.
+
+* `exception_arg_color`<br>
+Escape sequence to set exception arguments color.
+
 * `link_color`<br>
 Escape sequence to set link color.
 
 * `reset_stdout`<br>
 When enabled the reset escape sequence will be written to stdout as well as stderr; turn this on if your console is being left with the wrong color.
-
----
-
-If you want to customize the output more than `configure` provides then you can replace the output functions
-on `sys.stderr` after importing `pretty_errors`.  These are:
-
-* `write_header(self)`<br>
-Is called at the start of a traceback.
-
-* `timestamp(self)`<br>
-Returns a string timestamp used in the header if `display_timestamp` is enabled.
-
-* `write_location(self, path, line_number, function)`<br>
-Is called with details on the exception's location.
-
-* `write_body(self, body)`<br>
-Is called with any other text sent to stderr (i.e. the code in question).  `body` will never contain `\n`, though
-it may be longer than the defined maximum line length.
-
-
-You may replace as many of these functions as you wish, or for maximum control of output you may replace the main
-method called with all stderr output:
-
-* `write(self, *args)`<br>
-Replacement for `sys.stderr.write`
-
-
-You may use these helper functions to make this easier (see `pretty_errors/__init__.py` for examples, especially `write`):
-
-
-* `output_text(self, text, newline = False)`<br>
-Outputs text while trying to only insert 1 newline when outputing a line of maximum length.  `text` should be a
-list of strings: colour escape codes and text data.
-
-* `get_location(self, text)`<br>
-Extracts location of exception.  If it returns `None` then text was not a location identifier.
-
-* `is_header(self, text)`<br>
-Checks if text is the start of a traceback.
-
-
-For example, to change the header:
-```python
-def write_header(self):
-    self.output_text([self.header_color, "\nERROR!!!!!!!!!!"], newline = True)
-
-sys.stderr.write_header = write_header
-```
