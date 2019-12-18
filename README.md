@@ -74,10 +74,10 @@ Character used to create the header line.  Hyphen is used by default.
 * `prefix`<br>
 Text string which is displayed at the top of the report, just below the header.
 
-* `Infix`<br>
+* `infix`<br>
 Text string which is displayed between each frame of the stack.
 
-* `Postfix`<br>
+* `postfix`<br>
 Text string which is displayed at the bottom of the exception report.
 
 * `header_color`<br>

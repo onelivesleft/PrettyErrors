@@ -1,3 +1,8 @@
+# v1.1.2
+
+* Fix README
+
+
 # v1.1.1
 
 * Python 2.7 compatibility

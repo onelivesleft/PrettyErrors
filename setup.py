@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pretty_errors",
-    version="1.1.1",
+    version="1.1.2",
     author="Iain King",
     author_email="iain.king@gmail.com",
     description="Prettifies Python exception output to make it legible.",
@@ -15,6 +15,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 2",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
