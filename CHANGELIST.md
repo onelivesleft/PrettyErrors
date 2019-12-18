@@ -1,3 +1,8 @@
+# v1.1.4
+
+* `colorama` dependency
+
+
 # v1.1.3
 
 * Added `whitelist` and `blacklist`

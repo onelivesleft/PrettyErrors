@@ -24,9 +24,16 @@ pretty_errors.configure(
     lines_before = 2,
     lines_after = 1
 )
+pretty_errors.blacklist('c:/python')
 ```
 
 It is possible to have the interactive interpreter always use `pretty_errors`, instead of including it in your projects, by using the `PYTHONSTARTUP` environment variable.  Set it to a python file and that file will be run every time python is.  If you don't already have one then create a file with the above code block and set `PYTHONSTARTUP` to its path.  Whenever you run python interactively, `pretty_errors` will be automatically imported and configured (though this will not be true when your python code is run outwith the interactive interpreter.)
+
+---
+
+##### Whitelist / Blacklist:
+
+You may use the functions `whitelist(path)` and `blacklist(path)` to add paths which will be necessary (`whitelist`) or excluded (`blacklist`).  The top frame of the stack is never excluded.
 
 ---
 
@@ -112,9 +119,3 @@ Escape sequence to set link color.
 
 * `reset_stdout`<br>
 When enabled the reset escape sequence will be written to stdout as well as stderr; turn this on if your console is being left with the wrong color.
-
----
-
-##### Whitelist / Blacklist:
-
-You may use the functions `whitelist(path)` and `blacklist(path)` to add paths which will be necessary (`whitelist`) or excluded (`blacklist`).  The top frame of the stack is never excluded.

@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pretty_errors",
-    version="1.1.3",
+    version="1.1.4",
     author="Iain King",
     author_email="iain.king@gmail.com",
     description="Prettifies Python exception output to make it legible.",
@@ -13,6 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/onelivesleft/PrettyErrors/",
     packages=setuptools.find_packages(),
+    install_requiers=["colorama"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 2",
