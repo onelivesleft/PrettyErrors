@@ -54,6 +54,12 @@ When enabled a timestamp is written in the traceback header.
 * `display_link`<br>
 When enabled a link is written below the error location, which VSCode will allow you to click on.
 
+* `display_locals`<br>
+When enabled, local variables appearing in the top stack frame code will be displayed with their values.
+
+* `display_trace_locals`<br>
+When enabled, local variables appearing in other stack frame code will be displayed with their values.
+
 * `exception_above`<br>
 When enabled the exception is displayed above the stack trace.
 
@@ -98,6 +104,12 @@ Escape sequence to set the color of the line of code which caused the exception.
 
 * `code_color`<br>
 Escape sequence to set the color of other displayed lines of code.
+
+* `local_name_color`<br>
+Escape sequence to set the color of local variable names.
+
+* `local_value_color`<br>
+Escape sequence to set the color of local variable values.
 
 * `filename_color`<br>
 Escape sequence to set filename color.

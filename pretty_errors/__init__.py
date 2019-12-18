@@ -29,6 +29,8 @@ class PrettyErrorsConfig():
         self.trace_lines_after      = 0
         self.lines_before           = 0
         self.lines_after            = 0
+        self.display_locals         = False
+        self.display_trace_locals   = False
         self.header_color           = '\033[1;30m'
         self.timestamp_color        = '\033[1;30m'
         self.line_color             = '\033[1;38m'
@@ -37,8 +39,10 @@ class PrettyErrorsConfig():
         self.line_number_color      = '\033[1;32m'
         self.function_color         = '\033[1;34m'
         self.link_color             = '\033[1;30m'
+        self.local_name_color       = '\033[1;35m'
+        self.local_value_color      = '\033[m'
         self.exception_color        = '\033[1;31m'
-        self.exception_arg_color    = '\033[1;35m'
+        self.exception_arg_color    = '\033[1;33m'
         self.prefix                 = None
         self.infix                  = None
         self.postfix                = None
@@ -65,6 +69,8 @@ def configure(line_length = None, filename_display = None, full_line_newline = N
               prefix = None, infix = None, postfix = None,
               trace_lines_before = None, trace_lines_after = None,
               lines_before = None, lines_after = None,
+              display_locals = None, display_trace_locals = None,
+              local_name_color = None, local_value_color = None,
               top_first = None, stack_depth = None, line_number_first = None,
               exception_above = None, exception_below = None, reset_stdout = None):
     """Used to configure settings governing how exceptions are displayed."""
@@ -94,6 +100,10 @@ def configure(line_length = None, filename_display = None, full_line_newline = N
         trace_lines_after      = trace_lines_after,
         lines_before           = lines_before,
         lines_after            = lines_after,
+        display_locals         = display_locals,
+        display_trace_locals   = display_trace_locals,
+        local_name_color       = local_name_color,
+        local_value_color      = local_value_color,
         top_first              = top_first,
         line_number_first      = line_number_first,
         stack_depth            = stack_depth,
@@ -227,6 +237,8 @@ def excepthook(exception_type, exception_value, traceback):
             else:
                 output_text([config.code_color, line], newline = True)
 
+        return '\n'.join(lines)
+
 
     def exception_name(exception):
         label = str(exception)
@@ -280,7 +292,7 @@ def excepthook(exception_type, exception_value, traceback):
     else:
         if config.stack_depth > 0:
             tracebacks = tracebacks[-config.stack_depth:]
-        final = config.stack_depth - 1
+        final = len(tracebacks) - 1
 
     for count, traceback in enumerate(tracebacks):
         if config.infix != None and count != 0:
@@ -289,7 +301,17 @@ def excepthook(exception_type, exception_value, traceback):
         frame = traceback.tb_frame
         code = frame.f_code
         write_location(code.co_filename, traceback.tb_lineno, code.co_name)
-        write_code(code.co_filename, traceback.tb_lineno, frame.f_globals, count == final)
+        code_string = write_code(code.co_filename, traceback.tb_lineno, frame.f_globals, count == final)
+
+        if (config.display_locals and count == final) or (config.display_trace_locals and count != final):
+            local_variables = [(code_string.find(x), x) for x in frame.f_locals]
+            local_variables.sort()
+            local_variables = [x[1] for x in local_variables if x[0] >= 0]
+            for local in local_variables:
+                output_text([
+                    config.local_name_color, local, ': ',
+                    config.local_value_color, frame.f_locals[local],
+                ], newline = True)
 
     if config.exception_below:
         output_text('', newline = True)
@@ -304,7 +326,9 @@ sys.excepthook = excepthook
 
 
 if __name__ == "__main__":
-    configure(line_number_first = False, filename_display=FILENAME_FULL)
-    blacklist("c:/")
+    configure(lines_before = 2, lines_after = 2, display_locals = True)
+    #blacklist("c:/")
+    alpha = "A"
+    hello = "Hi"
     raise KeyError("foo", 1)
         #test
