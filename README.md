@@ -112,3 +112,9 @@ Escape sequence to set link color.
 
 * `reset_stdout`<br>
 When enabled the reset escape sequence will be written to stdout as well as stderr; turn this on if your console is being left with the wrong color.
+
+---
+
+##### Whitelist / Blacklist:
+
+You may use the functions `whitelist(path)` and `blacklist(path)` to add paths which will be necessary (`whitelist`) or excluded (`blacklist`).  The top frame of the stack is never excluded.
