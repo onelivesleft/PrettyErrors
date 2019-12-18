@@ -1,3 +1,8 @@
+# v1.1.1
+
+* Python 2.7 compatibility
+
+
 # v1.1.0
 
 * Reworked to replace `sys.excepthook` instead of `sys.stderr`
