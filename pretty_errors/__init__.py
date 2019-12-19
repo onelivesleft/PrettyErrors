@@ -22,6 +22,7 @@ class PrettyErrorsConfig():
         self.seperator_character    = '-'
         self.line_number_first      = False
         self.top_first              = False
+        self.always_display_bottom  = True
         self.stack_depth            = 0
         self.exception_above        = False
         self.exception_below        = True
@@ -31,16 +32,23 @@ class PrettyErrorsConfig():
         self.lines_after            = 0
         self.display_locals         = False
         self.display_trace_locals   = False
+        self.truncate_locals        = True
+        self.truncate_code          = False
+        self.line_prefix            = ''
+        self.code_prefix            = ''
         self.header_color           = '\033[1;30m'
         self.timestamp_color        = '\033[1;30m'
         self.line_color             = '\033[1;38m'
         self.code_color             = '\033[1;30m'
+        self.line_prefix_color      = '\033[1;38m'
+        self.code_prefix_color      = '\033[1;30m'
         self.filename_color         = '\033[1;36m'
         self.line_number_color      = '\033[1;32m'
         self.function_color         = '\033[1;34m'
         self.link_color             = '\033[1;30m'
         self.local_name_color       = '\033[1;35m'
         self.local_value_color      = '\033[m'
+        self.local_len_color        = '\033[1;30m'
         self.exception_color        = '\033[1;31m'
         self.exception_arg_color    = '\033[1;33m'
         self.prefix                 = None
@@ -60,54 +68,92 @@ class PrettyErrorsConfig():
 config = PrettyErrorsConfig()
 
 
-def configure(line_length = None, filename_display = None, full_line_newline = None,
-              display_timestamp = None, display_link = None, seperator_character = None,
-              header_color = None, line_color = None, code_color = None,
-              timestamp_color = None, filename_color = None, line_number_color = None,
-              function_color = None, link_color = None,
-              exception_color = None, exception_arg_color = None,
-              prefix = None, infix = None, postfix = None,
-              trace_lines_before = None, trace_lines_after = None,
-              lines_before = None, lines_after = None,
-              display_locals = None, display_trace_locals = None,
-              local_name_color = None, local_value_color = None,
-              top_first = None, stack_depth = None, line_number_first = None,
-              exception_above = None, exception_below = None, reset_stdout = None):
+def configure(
+        always_display_bottom = None,
+        code_color = None,
+        code_prefix = None,
+        code_prefix_color = None,
+        display_link = None,
+        display_locals = None,
+        display_timestamp = None,
+        display_trace_locals = None,
+        exception_above = None,
+        exception_arg_color = None,
+        exception_below = None,
+        exception_color = None,
+        filename_color = None,
+        filename_display = None,
+        full_line_newline = None,
+        function_color = None,
+        header_color = None,
+        infix = None,
+        line_color = None,
+        line_length = None,
+        line_number_color = None,
+        line_number_first = None,
+        line_prefix = None,
+        line_prefix_color = None,
+        lines_after = None,
+        lines_before = None,
+        link_color = None,
+        local_len_color = None,
+        local_name_color = None,
+        local_value_color = None,
+        postfix = None,
+        prefix = None,
+        reset_stdout = None,
+        seperator_character = None,
+        stack_depth = None,
+        timestamp_color = None,
+        top_first = None,
+        trace_lines_after = None,
+        trace_lines_before = None,
+        truncate_code = None,
+        truncate_locals = None
+        ):
     """Used to configure settings governing how exceptions are displayed."""
     config.configure(
-        line_length            = line_length,
+        always_display_bottom  = always_display_bottom,
+        code_color             = code_color,
+        code_prefix            = code_prefix,
+        code_prefix_color      = code_prefix_color,
+        display_link           = display_link,
+        display_locals         = display_locals,
+        display_timestamp      = display_timestamp,
+        display_trace_locals   = display_trace_locals,
+        exception_above        = exception_above,
+        exception_arg_color    = exception_arg_color,
+        exception_below        = exception_below,
+        exception_color        = exception_color,
+        filename_color         = filename_color,
         filename_display       = filename_display,
         full_line_newline      = full_line_newline,
-        display_timestamp      = display_timestamp,
-        display_link           = display_link,
-        seperator_character    = seperator_character,
-        header_color           = header_color,
-        line_color             = line_color,
-        code_color             = code_color,
-        timestamp_color        = timestamp_color,
-        filename_color         = filename_color,
-        line_number_color      = line_number_color,
         function_color         = function_color,
-        link_color             = link_color,
-        exception_color        = exception_color,
-        exception_arg_color    = exception_arg_color,
-        prefix                 = prefix,
+        header_color           = header_color,
         infix                  = infix,
-        postfix                = postfix,
-        exception_above        = exception_above,
-        exception_below        = exception_below,
-        trace_lines_before     = trace_lines_before,
-        trace_lines_after      = trace_lines_after,
-        lines_before           = lines_before,
+        line_color             = line_color,
+        line_length            = line_length,
+        line_number_color      = line_number_color,
+        line_number_first      = line_number_first,
+        line_prefix            = line_prefix,
+        line_prefix_color      = line_prefix_color,
         lines_after            = lines_after,
-        display_locals         = display_locals,
-        display_trace_locals   = display_trace_locals,
+        lines_before           = lines_before,
+        link_color             = link_color,
+        local_len_color        = local_len_color,
         local_name_color       = local_name_color,
         local_value_color      = local_value_color,
-        top_first              = top_first,
-        line_number_first      = line_number_first,
+        postfix                = postfix,
+        prefix                 = prefix,
+        reset_stdout           = reset_stdout,
+        seperator_character    = seperator_character,
         stack_depth            = stack_depth,
-        reset_stdout           = reset_stdout
+        timestamp_color        = timestamp_color,
+        top_first              = top_first,
+        trace_lines_after      = trace_lines_after,
+        trace_lines_before     = trace_lines_before,
+        truncate_code          = truncate_code,
+        truncate_locals        = truncate_locals
     )
 
 
@@ -223,6 +269,7 @@ def excepthook(exception_type, exception_value, traceback):
 
         min_lead = 9999
         for line in lines:
+            if line.strip() == '': continue
             c = 0
             while c < len(line) and line[c] in (' ', '\t'):
                 c += 1
@@ -230,12 +277,24 @@ def excepthook(exception_type, exception_value, traceback):
         if min_lead > 0:
             lines = [line[min_lead:] for line in lines]
 
+        if config.truncate_code:
+            line_length = get_line_length()
 
         for i, line in enumerate(lines):
             if i == target_line:
-                output_text([config.line_color, line], newline = True)
+                prefix_color = config.line_prefix_color
+                prefix       = config.line_prefix
+                color        = config.line_color
             else:
-                output_text([config.code_color, line], newline = True)
+                prefix_color = config.code_prefix_color
+                prefix       = config.code_prefix
+                color        = config.code_color
+            if config.truncate_code and len(line) + len(prefix) > line_length:
+                line = line[:line_length - (len(prefix) + 3)] + '...'
+            if prefix != '':
+                output_text([prefix_color, prefix, reset_color, color, line], newline = True)
+            else:
+                output_text([color, line], newline = True)
 
         return '\n'.join(lines)
 
@@ -269,15 +328,15 @@ def excepthook(exception_type, exception_value, traceback):
     tracebacks = []
     while traceback != None:
         path = os.path.normpath(traceback.tb_frame.f_code.co_filename).lower()
-        if config.whitelist_paths and traceback.tb_next:
-            for white in config.whitelist_paths:
-                if path.startswith(white): break
-            else:
-                traceback = traceback.tb_next
-                continue
-        if traceback.tb_next == None:
+        if traceback.tb_next == None or (config.always_display_bottom and tracebacks == []):
             tracebacks.append(traceback)
         else:
+            if config.whitelist_paths:
+                for white in config.whitelist_paths:
+                    if path.startswith(white): break
+                else:
+                    traceback = traceback.tb_next
+                    continue
             for black in config.blacklist_paths:
                 if path.startswith(black): break
             else:
@@ -287,11 +346,17 @@ def excepthook(exception_type, exception_value, traceback):
     if config.top_first:
         tracebacks.reverse()
         if config.stack_depth > 0:
-            tracebacks = tracebacks[:config.stack_depth]
+            if config.always_display_bottom and len(tracebacks) > 1:
+                tracebacks = tracebacks[:config.stack_depth] + tracebacks[-1:]
+            else:
+                tracebacks = tracebacks[:config.stack_depth]
         final = 0
     else:
         if config.stack_depth > 0:
-            tracebacks = tracebacks[-config.stack_depth:]
+            if config.always_display_bottom and len(tracebacks) > 1:
+                tracebacks = tracebacks[:1] + tracebacks[-config.stack_depth:]
+            else:
+                tracebacks = tracebacks[-config.stack_depth:]
         final = len(tracebacks) - 1
 
     for count, traceback in enumerate(tracebacks):
@@ -307,11 +372,21 @@ def excepthook(exception_type, exception_value, traceback):
             local_variables = [(code_string.find(x), x) for x in frame.f_locals]
             local_variables.sort()
             local_variables = [x[1] for x in local_variables if x[0] >= 0]
-            for local in local_variables:
-                output_text([
-                    config.local_name_color, local, ': ',
-                    config.local_value_color, frame.f_locals[local],
-                ], newline = True)
+            if local_variables:
+                output_text('', newline = True)
+                spacer = ': '
+                len_spacer = '... '
+                line_length = get_line_length()
+                for local in local_variables:
+                    value = str(frame.f_locals[local])
+                    output = [config.local_name_color, local, spacer, config.local_value_color]
+                    if config.truncate_locals and len(local) + len(spacer) + len(value) > line_length:
+                        length = '[' + str(len(value)) + ']'
+                        value = value[:line_length - (len(local) + len(spacer) + len(len_spacer) + len(length))]
+                        output += [value, len_spacer, config.local_len_color, length]
+                    else:
+                        output += [value]
+                    output_text(output, newline = True)
 
     if config.exception_below:
         output_text('', newline = True)
@@ -326,9 +401,22 @@ sys.excepthook = excepthook
 
 
 if __name__ == "__main__":
-    configure(lines_before = 2, lines_after = 2, display_locals = True)
+    configure(
+        seperator_character = '*',
+        filename_display = FILENAME_EXTENDED,
+        line_number_first = True,
+        display_link = True,
+        lines_before = 2,
+        lines_after = 1,
+        code_color = '\033[1;38m',
+        line_prefix_color = '\033[1;33m',
+        line_prefix = '> ',
+        code_prefix = '  ',
+        truncate_code = True,
+        display_locals = True
+    )
     #blacklist("c:/")
-    alpha = "A"
+    alpha = "It's actually trick trick question: I'll be back up on 27th. I think the evening of the 29th possibly the 30th as well"
     hello = "Hi"
     raise KeyError("foo", 1)
         #test
