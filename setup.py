@@ -1,4 +1,4 @@
-from setuptools import setup
+import setuptools
 from setuptools.command.install import install
 
 
