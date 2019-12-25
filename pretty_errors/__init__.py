@@ -413,7 +413,8 @@ def install(skip_query = False):
     except FileNotFoundError:
         sitecustomize = ''
     if re.search(r'^\s*import\s+\bpretty_errors\b', sitecustomize, re.MULTILINE):
-        print('pretty_errors already imported in:\n' + sitecustomize_path)
+        print('\npretty_errors already present in:\n  ' + sitecustomize_path +
+              '\nEdit it to set config options.')
     else:
         if not skip_query and not click.confirm(
                 'Add pretty_errors to your sitecustomize.py file?  '
@@ -461,9 +462,10 @@ pretty_errors.configure(''')
             out.write('\n'.join(output))
             out.close()
         except Exception:
-            print('Failed to write to:\n' + sitecustomize_path)
+            print('\nFailed to write to:\n' + sitecustomize_path)
         else:
-            print('pretty_errors added to:\n' + sitecustomize_path)
+            print('\npretty_errors added to:\n  ' + sitecustomize_path +
+                  '\nEdit it to set config options.')
 
 
 

@@ -7,7 +7,7 @@ python -m pip install pretty-errors
 
 The installer will ask you if you want to add `pretty_errors` to your `sitecustomize.py`.  If you do then it will be used whenever you run *any* python file; you won't have to import it manually.
 
-If you say no, but want to add it later, you can do so by manually editting the file, or simply running `pretty_errors`:
+If you say no, but want to add it later, you can do so by manually editting the file, or by running `pretty_errors`:
 ```bash
 python -m pretty_errors
 ```
