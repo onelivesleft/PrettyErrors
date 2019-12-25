@@ -1,3 +1,14 @@
+# v 1.1.11
+
+* Fix for python 2
+
+
+# v1.1.10
+
+* Added `__main__` for running with `-m`
+* Removed post-install code (it doesn't work with `pip` - `pip` has no post-install hook)
+
+
 # v1.1.9
 
 * Automated adding to `sitecustomize.py`

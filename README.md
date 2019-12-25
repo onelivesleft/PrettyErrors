@@ -5,12 +5,11 @@ Prettifies Python exception output to make it legible. Install it with
 python -m pip install pretty-errors
 ```
 
-The installer will ask you if you want to add `pretty_errors` to your `sitecustomize.py`.  If you do then it will be used whenever you run *any* python file; you won't have to import it manually.
-
-If you say no, but want to add it later, you can do so by manually editting the file, or by running `pretty_errors`:
-```bash
+If you want `pretty-errors` to be used whenever you run a python script you must add it to your `sitecustomize.py`.  You can do so easily by running:
+```
 python -m pretty_errors
 ```
+This is the recommended way to use `pretty-errors`
 
 ---
 
@@ -18,7 +17,7 @@ python -m pretty_errors
 
 ---
 
-If you have not installed it in your `sitecustomize.py` you can use it simply by importing it:
+If you have not installed it in your `sitecustomize.py` you can use it in your project simply by importing it:
 ```python
 import pretty_errors
 ```

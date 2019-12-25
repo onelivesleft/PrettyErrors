@@ -410,7 +410,7 @@ def install(skip_query = False):
     sitecustomize_path = os.path.join(site.USER_SITE, 'sitecustomize.py')
     try:
         sitecustomize = ''.join((x for x in open(sitecustomize_path)))
-    except FileNotFoundError:
+    except IOError:
         sitecustomize = ''
     if re.search(r'^\s*import\s+\bpretty_errors\b', sitecustomize, re.MULTILINE):
         print('\npretty_errors already present in:\n  ' + sitecustomize_path +

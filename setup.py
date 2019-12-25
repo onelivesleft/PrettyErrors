@@ -1,21 +1,11 @@
 import setuptools
-from setuptools.command.install import install
-
-
-class InstallCommand(install):
-    def run(self):
-        install.run(self)
-        import pretty_errors
-        pretty_errors.install()
-
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-
 setuptools.setup(
     name="pretty_errors",
-    version="1.1.9",
+    version="1.1.11",
     author="Iain King",
     author_email="iain.king@gmail.com",
     description="Prettifies Python exception output to make it legible.",
@@ -26,9 +16,6 @@ setuptools.setup(
     install_requires=[
         "colorama",
     ],
-    cmdclass={
-        'install': InstallCommand,
-    },
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 2",
