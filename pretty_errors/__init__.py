@@ -60,7 +60,7 @@ class PrettyErrorsConfig():
 
 
     def configure(self, **kwargs):
-        """Used to configure settings governing how exceptions are displayed."""
+        """Configure settings governing how exceptions are displayed."""
         for setting in kwargs:
             if kwargs[setting] is not None: setattr(self, setting, kwargs[setting])
 
@@ -111,7 +111,7 @@ def configure(
         truncate_code = None,
         truncate_locals = None
         ):
-    """Used to configure settings governing how exceptions are displayed."""
+    """Configure settings governing how exceptions are displayed."""
     config.configure(
         always_display_bottom  = always_display_bottom,
         code_color             = code_color,
@@ -159,14 +159,16 @@ def configure(
 
 def whitelist(*paths):
     """If the whitelist has any entries, then only files which begin with
-    one of its entries will be included in the stack trace"""
+    one of its entries will be included in the stack trace.
+    """
     for path in paths:
         config.whitelist_paths.append(os.path.normpath(path).lower())
 
 
 def blacklist(*paths):
     """Files which begin with a path on the blacklist will not be
-    included in the stack trace."""
+    included in the stack trace.
+    """
     for path in paths:
         config.blacklist_paths.append(os.path.normpath(path).lower())
 
@@ -215,7 +217,7 @@ def excepthook(exception_type, exception_value, traceback):
         else:
             seperator = line_length * config.seperator_character
         output_text('\n')
-        output_text([config.header_color, seperator], newline = True)
+        output_text([config.header_color, seperator], newline=True)
 
 
     def write_location(path, line, function):
@@ -223,8 +225,8 @@ def excepthook(exception_type, exception_value, traceback):
         output_text('\n')
         if config.filename_display == FILENAME_FULL:
             filename = ""
-            output_text([config.filename_color, path], newline = True)
-            output_text([config.line_number_color, line_number, config.function_color, function], newline = True)
+            output_text([config.filename_color, path], newline=True)
+            output_text([config.line_number_color, line_number, config.function_color, function], newline=True)
         else:
             if config.filename_display == FILENAME_EXTENDED:
                 line_length = get_line_length()
@@ -238,15 +240,15 @@ def excepthook(exception_type, exception_value, traceback):
                     config.line_number_color, line_number,
                     config.function_color,    function + ' ',
                     config.filename_color,    filename
-                ], newline = True)
+                ], newline=True)
             else:
                 output_text([
                     config.filename_color,    filename + ' ',
                     config.line_number_color, line_number,
                     config.function_color,    function
-                ], newline = True)
+                ], newline=True)
         if config.display_link:
-            output_text([config.link_color, '"%s", line %s' % (path, line)], newline = True)
+            output_text([config.link_color, '"%s", line %s' % (path, line)], newline=True)
 
 
     def write_code(filepath, line, module_globals, is_final):
@@ -292,9 +294,9 @@ def excepthook(exception_type, exception_value, traceback):
             if config.truncate_code and len(line) + len(prefix) > line_length:
                 line = line[:line_length - (len(prefix) + 3)] + '...'
             if prefix != '':
-                output_text([prefix_color, prefix, reset_color, color, line], newline = True)
+                output_text([prefix_color, prefix, reset_color, color, line], newline=True)
             else:
-                output_text([color, line], newline = True)
+                output_text([color, line], newline=True)
 
         return '\n'.join(lines)
 
@@ -311,9 +313,9 @@ def excepthook(exception_type, exception_value, traceback):
             output_text([
                 config.exception_color, exception_name(exception_type), ':\n',
                 config.exception_arg_color, '\n'.join((str(x) for x in exception_value.args))
-            ], newline = True)
+            ], newline=True)
         else:
-            output_text([config.exception_color, exception_name(exception_type)], newline = True)
+            output_text([config.exception_color, exception_name(exception_type)], newline=True)
 
 
     write_header()
@@ -322,7 +324,7 @@ def excepthook(exception_type, exception_value, traceback):
         sys.stderr.write(config.prefix)
 
     if config.exception_above:
-        output_text('', newline = True)
+        output_text('', newline=True)
         write_exception(exception_type, exception_value)
 
     tracebacks = []
@@ -373,7 +375,7 @@ def excepthook(exception_type, exception_value, traceback):
             local_variables.sort()
             local_variables = [x[1] for x in local_variables if x[0] >= 0]
             if local_variables:
-                output_text('', newline = True)
+                output_text('', newline=True)
                 spacer = ': '
                 len_spacer = '... '
                 line_length = get_line_length()
@@ -386,10 +388,10 @@ def excepthook(exception_type, exception_value, traceback):
                         output += [value, len_spacer, config.local_len_color, length]
                     else:
                         output += [value]
-                    output_text(output, newline = True)
+                    output_text(output, newline=True)
 
     if config.exception_below:
-        output_text('', newline = True)
+        output_text('', newline=True)
         write_exception(exception_type, exception_value)
 
     if config.postfix != None:
@@ -400,23 +402,70 @@ sys.excepthook = excepthook
 
 
 
+def install(skip_query = False):
+    """Install pretty_errors in your sitecustomize.py file, which means
+    it will be present whenever you run a python file.
+    """
+    import click, re, site
+    sitecustomize_path = os.path.join(site.USER_SITE, 'sitecustomize.py')
+    try:
+        sitecustomize = ''.join((x for x in open(sitecustomize_path)))
+    except FileNotFoundError:
+        sitecustomize = ''
+    if re.search(r'^\s*import\s+\bpretty_errors\b', sitecustomize, re.MULTILINE):
+        print('pretty_errors already imported in:\n' + sitecustomize_path)
+    else:
+        if not skip_query and not click.confirm(
+                'Add pretty_errors to your sitecustomize.py file?  '
+                'If so it will be used whenever you run any python file.',
+                default=True):
+            return
+        output = []
+        output.append('''
+
+# pretty-errors package to make exception reports legible.
+import pretty_errors
+"""
+pretty_errors.configure(''')
+        options = []
+        colors = []
+        parameters = []
+        max_length = 0
+        for option in dir(config):
+            if len(option) > max_length:
+                max_length = len(option)
+            if (option not in ('configure', 'whitelist_paths', 'blacklist_paths') and
+                    not option.startswith('_')):
+                if option.endswith('_color'):
+                    colors.append(option)
+                else:
+                    options.append(option)
+        for option in sorted(options):
+            if option == 'filename_display':
+                parameters.append('    ' + option.ljust(max_length) + ' = pretty_errors.FILENAME_COMPACT,  # FILENAME_EXTENDED | FILENAME_FULL')
+            else:
+                parameters.append('    ' + option.ljust(max_length) + ' = ' + repr(getattr(config, option)))
+        for option in sorted(colors):
+            parameters.append('    ' + option.ljust(max_length) + ' = ' + repr(getattr(config, option)))
+
+        output.append(',\n'.join(parameters))
+        output.append(')')
+        output.append('"""\n')
+
+        try:
+            os.makedirs(site.USER_SITE)
+        except Exception:
+            pass
+        try:
+            out = open(sitecustomize_path, 'a')
+            out.write('\n'.join(output))
+            out.close()
+        except Exception:
+            print('Failed to write to:\n' + sitecustomize_path)
+        else:
+            print('pretty_errors added to:\n' + sitecustomize_path)
+
+
+
 if __name__ == "__main__":
-    configure(
-        seperator_character = '*',
-        filename_display = FILENAME_EXTENDED,
-        line_number_first = True,
-        display_link = True,
-        lines_before = 2,
-        lines_after = 1,
-        code_color = '\033[1;38m',
-        line_prefix_color = '\033[1;33m',
-        line_prefix = '> ',
-        code_prefix = '  ',
-        truncate_code = True,
-        display_locals = True
-    )
-    #blacklist("c:/")
-    alpha = "It's actually trick trick question: I'll be back up on 27th. I think the evening of the 29th possibly the 30th as well"
-    hello = "Hi"
-    raise KeyError("foo", 1)
-        #test
+    install(skip_query=('-y' in sys.argv))

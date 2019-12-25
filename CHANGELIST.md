@@ -1,3 +1,8 @@
+# v1.1.9
+
+* Automated adding to `sitecustomize.py`
+
+
 # v1.1.8
 
 * Added config options `always_display_bottom`, `truncate_locals`, `truncate_code`, `line_prefix`, `code_prefix`, `line_prefix_color`, `code_prefix_color`, `local_len_color`
