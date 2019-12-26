@@ -9,7 +9,7 @@ If you want `pretty-errors` to be used whenever you run a python script you must
 ```
 python -m pretty_errors
 ```
-This is the recommended way to use `pretty-errors`
+This is the recommended way to use `pretty-errors`; apart from being simpler and universal, using it will mean `SyntaxError` exceptions also get formatted prettily (which doesn't work if you are manually importing `pretty-errors`).
 
 ---
 
@@ -21,8 +21,7 @@ If you have not installed it in your `sitecustomize.py` you can use it in your p
 ```python
 import pretty_errors
 ```
-Note you need to be running in a terminal capable of colour output in order to get colour output: in Windows
-this means powershell, cmder, etc.
+Note you need to be running in a terminal capable of colour output in order to get colour output: in Windows this means powershell, cmder, etc.  If you must use a monochrome terminal then you can call the helper function `pretty_errors.mono()`, which will set some config options in a way that is useful for monochrome output.
 
 If you want to configure the output then use `pretty_errors.configure()`, `pretty_errors.whitelist()`, `pretty_errors.blacklist()`.  For example:
 ```python
@@ -34,9 +33,8 @@ pretty_errors.configure(
     display_link        = True,
     lines_before        = 2,
     lines_after         = 1,
-    line_prefix_color   = '\033[1;33m',
-    line_prefix         = '> ',
-    code_prefix         = '  ',
+    line_color          = '> ' + pretty_errors.default_config.line_color,
+    code_color          = '  ' + pretty_errors.default_config.code_color,
     truncate_code       = True,
     display_locals      = True
 )
@@ -53,6 +51,8 @@ You may use the functions `whitelist(path)` and `blacklist(path)` to add paths w
 
 ##### Configuration settings:
 
+Configuration settings are stored in `pretty_errors.config`, though should be set using `pretty_errors.configure()`.  A reference for the default config is stored in `pretty_errors.default_config`.
+
 * `line_length`<br>
 Output will be wrapped at this point.  If set to `0` (which is the default) it will automatically match your console width.
 
@@ -64,6 +64,9 @@ Character used to create the header line.  Hyphen is used by default.
 
 * `display_timestamp`<br>
 When enabled a timestamp is written in the traceback header.
+
+* `timestamp_function`<br>
+Function called to generate timestamp.  Default is `time.perf_counter`.
 
 * `exception_above`<br>
 When enabled the exception is displayed above the stack trace.
@@ -95,12 +98,6 @@ How many lines of code to display for the top frame, before and after the line t
 * `trace_lines_after`, `trace_lines_before`<br>
 How many lines of code to display for each other frame in the stack trace, before and after the line the exception occurred on.
 
-* `line_prefix`<br>
-String displayed before the line which caused the exception.
-
-* `code_prefix`<br>
-String displayed before each line of context code.
-
 * `truncate_code`<br>
 When enabled each line of code will be truncated to fit the line length.
 
@@ -127,6 +124,8 @@ When enabled the reset escape sequence will be written to stdout as well as stde
 
 ---
 
+These color strings will be output before the relevant part of the exception message.  You may include non-escape sequence strings if you wish; if you do not have a terminal which supports color output, or simply want to include extra demarcation.
+
 * `header_color`<br>
 Escape sequence to set header color.
 
@@ -151,14 +150,8 @@ Escape sequence to set function color.
 * `link_color`<br>
 Escape sequence to set link color.
 
-* `line_prefix_color`<br>
-Escape sequence to set color of prefix for line of code which caused the exception.
-
 * `line_color`<br>
 Escape sequence to set the color of the line of code which caused the exception.
-
-* `code_prefix_color`<br>
-Escape sequence to set color of prefix for context code lines.
 
 * `code_color`<br>
 Escape sequence to set the color of other displayed lines of code.

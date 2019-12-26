@@ -1,3 +1,17 @@
+# v1.2.1
+
+* Fix fpr Python 2
+
+
+# v1.2.0
+
+* Added `mono` function to set useful config options for a monochrome terminal.
+* Added config option `timestamp_function`
+* Added `default_config` for reference.
+* May now use any characters in color prefixes (not just escape sequences)
+* Removed config options `line_prefix`, `code_prefix`, `line_prefix_color`, `code_prefix_color` - no longer needed because of above.
+
+
 # v 1.1.11
 
 * Fix for python 2
