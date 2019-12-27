@@ -1,6 +1,6 @@
 # v1.2.1
 
-* Fix fpr Python 2
+* Fix for Python 2
 
 
 # v1.2.0
