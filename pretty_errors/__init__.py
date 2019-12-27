@@ -23,7 +23,7 @@ class PrettyErrorsConfig():
         except AttributeError:
             self.timestamp_function = time.time
         self.display_link           = False
-        self.seperator_character    = '-'
+        self.separator_character    = '-'
         self.line_number_first      = False
         self.top_first              = False
         self.always_display_bottom  = True
@@ -99,7 +99,7 @@ def configure(
         postfix = None,
         prefix = None,
         reset_stdout = None,
-        seperator_character = None,
+        separator_character = None,
         stack_depth = None,
         timestamp_color = None,
         timestamp_function = None,
@@ -140,7 +140,7 @@ def configure(
         postfix                = postfix,
         prefix                 = prefix,
         reset_stdout           = reset_stdout,
-        seperator_character    = seperator_character,
+        separator_character    = separator_character,
         stack_depth            = stack_depth,
         timestamp_color        = timestamp_color,
         timestamp_function     = timestamp_function,
@@ -236,11 +236,11 @@ def excepthook(exception_type, exception_value, traceback):
         line_length = get_line_length()
         if config.display_timestamp:
             timestamp = str(config.timestamp_function())
-            seperator = (line_length - len(timestamp)) * config.seperator_character + timestamp
+            separator = (line_length - len(timestamp)) * config.separator_character + timestamp
         else:
-            seperator = line_length * config.seperator_character
+            separator = line_length * config.separator_character
         output_text('')
-        output_text([config.header_color, seperator])
+        output_text([config.header_color, separator])
 
 
     def write_location(path, line, function):
