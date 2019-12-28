@@ -1,3 +1,10 @@
+# v1.2.2
+
+* `separator_character` can now be set to `None` or `''` to disable header.
+* Improved install wizard.
+* Spelling corrections.
+
+
 # v1.2.1
 
 * Fix for Python 2

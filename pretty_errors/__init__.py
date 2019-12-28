@@ -233,6 +233,7 @@ def excepthook(exception_type, exception_value, traceback):
 
 
     def write_header():
+        if not config.separator_character: return
         line_length = get_line_length()
         if config.display_timestamp:
             timestamp = str(config.timestamp_function())
@@ -428,72 +429,158 @@ sys.excepthook = excepthook
 
 
 
-def install(skip_query = False):
-    """Install pretty_errors in your sitecustomize.py file, which means
-    it will be present whenever you run a python file.
-    """
-    import click, re, site
-    sitecustomize_path = os.path.join(site.USER_SITE, 'sitecustomize.py')
-    try:
-        sitecustomize = ''.join((x for x in open(sitecustomize_path)))
-    except IOError:
-        sitecustomize = ''
-    if re.search(r'^\s*import\s+\bpretty_errors\b', sitecustomize, re.MULTILINE):
-        print('\npretty_errors already present in:\n  ' + sitecustomize_path +
-              '\nEdit it to set config options.')
+def install(find = False, add_to_user = False, add_to_site = False, pth = False, path = None):
+    """Install pretty_errors so that it is imported whenever you run a python file."""
+    import re, site
+    check = re.compile(r'^\s*import\s+\bpretty_errors\b', re.MULTILINE)
+
+    def readfile(path):
+        try:
+            return ''.join((x for x in open(path)))
+        except IOError:
+            return ''
+
+    def find_install(quiet = False):
+        found = False
+        for path in site.getsitepackages() + [site.getusersitepackages()]:
+            for filename in 'usercustomize.py', 'sitecustomize.py', 'pretty_errors.pth':
+                filepath = os.path.join(path, filename)
+                if check.search(readfile(filepath)):
+                    if not found:
+                        print('\npretty_errors found in:')
+                        found = True
+                    print(filepath)
+        if not found and not quiet:
+            print('\npretty_errors not currently installed in any expected locations.')
+        return found
+
+    if find:
+        find_install()
+        return
+
+    if add_to_user:
+        path = site.getusersitepackages()
+        filename = 'pretty_errors.pth' if pth else 'usercustomize.py'
+    elif add_to_site:
+        path = site.getsitepackages()[0]
+        filename = 'pretty_errors.pth' if pth else 'sitecustomize.py'
     else:
-        if not skip_query and not click.confirm(
-                'Add pretty_errors to your sitecustomize.py file?  '
-                'If so it will be used whenever you run any python file.',
-                default=True):
-            return
-        output = []
-        output.append('''
+
+        def get_choice(query, choices, default = None):
+            options = {}
+            for i in range(len(choices)):
+                options[str(i + 1)] = i
+            while True:
+                print()
+                print(' ' + query)
+                print()
+                for option, choice in enumerate(choices):
+                    print('%d: %s' % ((option + 1), choice))
+                print('0: Exit')
+                if default is None:
+                    print('\nOption: ', end='')
+                else:
+                    print('\nOption: [default: %d] ' % (default + 1), end='')
+                choice = input()
+                if choice == '' and default is not None:
+                    choice = str(default + 1)
+                if choice == '0':
+                    sys.exit(0)
+                elif choice in options:
+                    return options[choice]
+
+        print("""\
+To have pretty_errors be used when you run any python file you may add it to your \
+usercustomize.py (user level) or sitecustomize.py (system level), or to pretty_errors.pth.
+
+(just hit <enter> to accept the defaults if you are unsure)
+ """)
+
+        found = find_install(True)
+
+        paths = site.getsitepackages() + [site.getusersitepackages()]
+        path = paths[get_choice('Choose folder to install into:', paths, -1 if found else len(paths) - 1)]
+
+        filenames = ['usercustomize.py', 'sitecustomize.py', 'pretty_errors.pth']
+        filename = filenames[get_choice('Choose file to install into:', filenames, 0)]
+
+        if filename.endswith('.pth'):
+            output = (os.path.dirname(os.path.dirname(os.path.normpath(__file__))) +
+                '\nimport pretty_errors; ' +
+                '#pretty_errors.configure()  ' +
+                '# keep on one line, for options see ' +
+                'https://github.com/onelivesleft/PrettyErrors/blob/master/README.md'
+            )
+        else:
+            output = []
+            output.append('''
+
+###########################################################################
 
 # pretty-errors package to make exception reports legible.
 import pretty_errors
-"""
-pretty_errors.configure(''')
-        options = []
-        colors = []
-        parameters = []
-        max_length = 0
-        for option in dir(config):
-            if len(option) > max_length:
-                max_length = len(option)
-            if (option not in ('configure', 'mono', 'whitelist_paths', 'blacklist_paths') and
-                    not option.startswith('_')):
-                if option.endswith('_color'):
-                    colors.append(option)
+
+# Use if you do not have a color terminal:
+#pretty_errors.mono()
+
+# Use to hide frames whose file begins with these paths:
+#pretty_errors.blacklist('/path/to/blacklist', '/other/path/to/blacklist', ...)
+
+# Use to only show frames whose file begins with these paths:
+#pretty_errors.whitelist('/path/to/whitelist', '/other/path/to/whitelist', ...)
+
+# Use to configure output:
+"""pretty_errors.configure(
+    ''')
+
+            options = []
+            colors = []
+            parameters = []
+            max_length = 0
+            for option in dir(config):
+                if len(option) > max_length:
+                    max_length = len(option)
+                if (option not in ('configure', 'mono', 'whitelist_paths', 'blacklist_paths') and
+                        not option.startswith('_')):
+                    if option.endswith('_color'):
+                        colors.append(option)
+                    else:
+                        options.append(option)
+            for option in sorted(options):
+                if option == 'filename_display':
+                    parameters.append('    ' + option.ljust(max_length) + ' = pretty_errors.FILENAME_COMPACT,  # FILENAME_EXTENDED | FILENAME_FULL')
+                elif option == 'timestamp_function':
+                    parameters.append('    ' + option.ljust(max_length) + ' = time.perf_counter')
                 else:
-                    options.append(option)
-        for option in sorted(options):
-            if option == 'filename_display':
-                parameters.append('    ' + option.ljust(max_length) + ' = pretty_errors.FILENAME_COMPACT,  # FILENAME_EXTENDED | FILENAME_FULL')
-            elif option == 'timestamp_function':
-                parameters.append('    ' + option.ljust(max_length) + ' = time.perf_counter')
-            else:
+                    parameters.append('    ' + option.ljust(max_length) + ' = ' + repr(getattr(config, option)))
+            for option in sorted(colors):
                 parameters.append('    ' + option.ljust(max_length) + ' = ' + repr(getattr(config, option)))
-        for option in sorted(colors):
-            parameters.append('    ' + option.ljust(max_length) + ' = ' + repr(getattr(config, option)))
 
-        output.append(',\n'.join(parameters))
-        output.append(')')
-        output.append('"""\n')
+            output.append(',\n'.join(parameters))
+            output.append(')"""\n')
+            output.append('###########################################################################\n')
+            output = '\n'.join(output)
 
-        try:
-            os.makedirs(site.USER_SITE)
-        except Exception:
-            pass
-        try:
-            out = open(sitecustomize_path, 'a')
-            out.write('\n'.join(output))
-            out.close()
-        except Exception:
-            print('\nFailed to write to:\n' + sitecustomize_path)
-        else:
-            print('\npretty_errors added to:\n  ' + sitecustomize_path +
-                  '\nEdit it to set config options.')
+        print('\n--------------')
+
+    filepath = os.path.join(path, filename)
+    if check.search(readfile(filepath)):
+        print('\npretty_errors already present in:\n\n ' + filepath +
+            '\n\nEdit it to set config options.\n')
+        return
+
+    try:
+        os.makedirs(path)
+    except Exception:
+        pass
+    try:
+        out = open(filepath, 'a')
+        out.write(output)
+        out.close()
+    except Exception:
+        print('\nFailed to write to:\n' + filepath)
+    else:
+        print('\npretty_errors added to:\n\n %s\n\nEdit it to set config options.\n' % filepath)
 
 
 

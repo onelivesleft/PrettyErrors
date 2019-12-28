@@ -60,7 +60,7 @@ Output will be wrapped at this point.  If set to `0` (which is the default) it w
 Insert a hard newline even if the line is full.  If `line_length` is the same as your console width and this is enabled then you will see double newlines where unwanted, so usually you would only set this if they are different.
 
 * `separator_character`<br>
-Character used to create the header line.  Hyphen is used by default.
+Character used to create the header line.  Hyphen is used by default.  If set to `None` or `''` then header will be disabled.
 
 * `display_timestamp`<br>
 When enabled a timestamp is written in the traceback header.
