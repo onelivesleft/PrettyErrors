@@ -5,7 +5,7 @@ Prettifies Python exception output to make it legible. Install it with
 python -m pip install pretty-errors
 ```
 
-If you want `pretty-errors` to be used whenever you run a python script you must add it to your `sitecustomize.py`.  You can do so easily by running:
+If you want `pretty-errors` to be used whenever you run a python script you must add it to your python startup procedure.  You can do so easily by running:
 ```
 python -m pretty_errors
 ```
@@ -17,7 +17,7 @@ This is the recommended way to use `pretty-errors`; apart from being simpler and
 
 ---
 
-If you have not installed it in your `sitecustomize.py` you can use it in your project simply by importing it:
+If you have not installed it universally you can use it in your project simply by importing it:
 ```python
 import pretty_errors
 ```

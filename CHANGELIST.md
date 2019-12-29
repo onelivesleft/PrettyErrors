@@ -1,3 +1,10 @@
+# v1.2.3
+
+* Added `ExceptionWriter` class to allow for overriding.
+* Added `pathed_config` call to allow for multiple configs, activated by path of code file in frame.
+* Added environment variable `PYTHON_PRETTY_ERRORS`.  If set to `0` then pretty_errors will be disabled.
+
+
 # v1.2.2
 
 * `separator_character` can now be set to `None` or `''` to disable header.

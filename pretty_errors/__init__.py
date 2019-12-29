@@ -1,68 +1,155 @@
 import sys, re, colorama, os, time, linecache
 colorama.init()
 
-
 name = "pretty_errors"
+
+_env_label = 'PYTHON_PRETTY_ERRORS'
+_active = _env_label not in os.environ or os.environ[_env_label] != '0'
 
 FILENAME_COMPACT  = 0
 FILENAME_EXTENDED = 1
 FILENAME_FULL     = 2
 
+ansi_escape = re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
 reset_color = '\033[m'
-
-
+whitelist_paths = []
+blacklist_paths = []
+config_paths = {}
 
 class PrettyErrorsConfig():
-    def __init__(self):
-        self.line_length            = 0
-        self.full_line_newline      = False
-        self.filename_display       = FILENAME_COMPACT
-        self.display_timestamp      = False
-        try:
-            self.timestamp_function = time.perf_counter
-        except AttributeError:
-            self.timestamp_function = time.time
-        self.display_link           = False
-        self.separator_character    = '-'
-        self.line_number_first      = False
-        self.top_first              = False
-        self.always_display_bottom  = True
-        self.stack_depth            = 0
-        self.exception_above        = False
-        self.exception_below        = True
-        self.trace_lines_before     = 0
-        self.trace_lines_after      = 0
-        self.lines_before           = 0
-        self.lines_after            = 0
-        self.display_locals         = False
-        self.display_trace_locals   = False
-        self.truncate_locals        = True
-        self.truncate_code          = False
-        self.header_color           = '\033[1;30m'
-        self.timestamp_color        = '\033[1;30m'
-        self.line_color             = '\033[1;38m'
-        self.code_color             = '\033[1;30m'
-        self.filename_color         = '\033[1;36m'
-        self.line_number_color      = '\033[1;32m'
-        self.function_color         = '\033[1;34m'
-        self.link_color             = '\033[1;30m'
-        self.local_name_color       = '\033[1;35m'
-        self.local_value_color      = '\033[m'
-        self.local_len_color        = '\033[1;30m'
-        self.exception_color        = '\033[1;31m'
-        self.exception_arg_color    = '\033[1;33m'
-        self.prefix                 = None
-        self.infix                  = None
-        self.postfix                = None
-        self.whitelist_paths        = []
-        self.blacklist_paths        = []
-        self.reset_stdout           = False
+    def __init__(self, instance = None):
+        if instance is None:
+            self.line_length            = 0
+            self.full_line_newline      = False
+            self.filename_display       = FILENAME_COMPACT
+            self.display_timestamp      = False
+            try:
+                self.timestamp_function = time.perf_counter
+            except AttributeError:
+                self.timestamp_function = time.time
+            self.display_link           = False
+            self.separator_character    = '-'
+            self.line_number_first      = False
+            self.top_first              = False
+            self.always_display_bottom  = True
+            self.stack_depth            = 0
+            self.exception_above        = False
+            self.exception_below        = True
+            self.trace_lines_before     = 0
+            self.trace_lines_after      = 0
+            self.lines_before           = 0
+            self.lines_after            = 0
+            self.display_locals         = False
+            self.display_trace_locals   = False
+            self.truncate_locals        = True
+            self.truncate_code          = False
+            self.header_color           = '\033[1;30m'
+            self.timestamp_color        = '\033[1;30m'
+            self.line_color             = '\033[1;38m'
+            self.code_color             = '\033[1;30m'
+            self.filename_color         = '\033[1;36m'
+            self.line_number_color      = '\033[1;32m'
+            self.function_color         = '\033[1;34m'
+            self.link_color             = '\033[1;30m'
+            self.local_name_color       = '\033[1;35m'
+            self.local_value_color      = '\033[m'
+            self.local_len_color        = '\033[1;30m'
+            self.exception_color        = '\033[1;31m'
+            self.exception_arg_color    = '\033[1;33m'
+            self.prefix                 = None
+            self.infix                  = None
+            self.postfix                = None
+            self.reset_stdout           = False
+        else:
+            self.line_length            = instance.line_length
+            self.full_line_newline      = instance.full_line_newline
+            self.filename_display       = instance.filename_display
+            self.display_timestamp      = instance.display_timestamp
+            self.timestamp_function     = instance.timestamp_function
+            self.display_link           = instance.display_link
+            self.separator_character    = instance.separator_character
+            self.line_number_first      = instance.line_number_first
+            self.top_first              = instance.top_first
+            self.always_display_bottom  = instance.always_display_bottom
+            self.stack_depth            = instance.stack_depth
+            self.exception_above        = instance.exception_above
+            self.exception_below        = instance.exception_below
+            self.trace_lines_before     = instance.trace_lines_before
+            self.trace_lines_after      = instance.trace_lines_after
+            self.lines_before           = instance.lines_before
+            self.lines_after            = instance.lines_after
+            self.display_locals         = instance.display_locals
+            self.display_trace_locals   = instance.display_trace_locals
+            self.truncate_locals        = instance.truncate_locals
+            self.truncate_code          = instance.truncate_code
+            self.header_color           = instance.header_color
+            self.timestamp_color        = instance.timestamp_color
+            self.line_color             = instance.line_color
+            self.code_color             = instance.code_color
+            self.filename_color         = instance.filename_color
+            self.line_number_color      = instance.line_number_color
+            self.function_color         = instance.function_color
+            self.link_color             = instance.link_color
+            self.local_name_color       = instance.local_name_color
+            self.local_value_color      = instance.local_value_color
+            self.local_len_color        = instance.local_len_color
+            self.exception_color        = instance.exception_color
+            self.exception_arg_color    = instance.exception_arg_color
+            self.prefix                 = instance.prefix
+            self.infix                  = instance.infix
+            self.postfix                = instance.postfix
+            self.reset_stdout           = instance.reset_stdout
 
 
     def configure(self, **kwargs):
         """Configure settings governing how exceptions are displayed."""
         for setting in kwargs:
             if kwargs[setting] is not None: setattr(self, setting, kwargs[setting])
+
+
+    def copy(self):
+        c = PrettyErrorsConfig()
+        c.line_length            = self.line_length
+        c.full_line_newline      = self.full_line_newline
+        c.filename_display       = self.filename_display
+        c.display_timestamp      = self.display_timestamp
+        c.timestamp_function     = self.timestamp_function
+        c.display_link           = self.display_link
+        c.separator_character    = self.separator_character
+        c.line_number_first      = self.line_number_first
+        c.top_first              = self.top_first
+        c.always_display_bottom  = self.always_display_bottom
+        c.stack_depth            = self.stack_depth
+        c.exception_above        = self.exception_above
+        c.exception_below        = self.exception_below
+        c.trace_lines_before     = self.trace_lines_before
+        c.trace_lines_after      = self.trace_lines_after
+        c.lines_before           = self.lines_before
+        c.lines_after            = self.lines_after
+        c.display_locals         = self.display_locals
+        c.display_trace_locals   = self.display_trace_locals
+        c.truncate_locals        = self.truncate_locals
+        c.truncate_code          = self.truncate_code
+        c.header_color           = self.header_color
+        c.timestamp_color        = self.timestamp_color
+        c.line_color             = self.line_color
+        c.code_color             = self.code_color
+        c.filename_color         = self.filename_color
+        c.line_number_color      = self.line_number_color
+        c.function_color         = self.function_color
+        c.link_color             = self.link_color
+        c.local_name_color       = self.local_name_color
+        c.local_value_color      = self.local_value_color
+        c.local_len_color        = self.local_len_color
+        c.exception_color        = self.exception_color
+        c.exception_arg_color    = self.exception_arg_color
+        c.prefix                 = self.prefix
+        c.infix                  = self.infix
+        c.postfix                = self.postfix
+        c.reset_stdout           = self.reset_stdout
+        return c
+
+    __copy__ = copy
 
 
 config = PrettyErrorsConfig()
@@ -179,7 +266,7 @@ def whitelist(*paths):
     one of its entries will be included in the stack trace.
     """
     for path in paths:
-        config.whitelist_paths.append(os.path.normpath(path).lower())
+        whitelist_paths.append(os.path.normpath(path).lower())
 
 
 def blacklist(*paths):
@@ -187,103 +274,157 @@ def blacklist(*paths):
     included in the stack trace.
     """
     for path in paths:
-        config.blacklist_paths.append(os.path.normpath(path).lower())
+        blacklist_paths.append(os.path.normpath(path).lower())
+
+
+def pathed_config(configuration, *paths):
+    """Use alternate configuration for files in the stack trace whose path
+    begins with one of these paths."""
+    for path in paths:
+        config_paths[os.path.normpath(path).lower()] = configuration
 
 
 
-def excepthook(exception_type, exception_value, traceback):
-    "Replaces sys.excepthook to output pretty errors."
+class ExceptionWriter():
+    """ExceptionWriter class for outputing exceptions to the screen.
+    Methods beginning 'write_' are the primary candidates for overriding.
+
+    Inherit from this class, then set:
+        pretty_errors.exception_writer = MyExceptionWriter()
+    """
+    def __init__(self):
+        self.config = None
 
 
-    def get_terminal_width():
+    def get_terminal_width(self):
+        """Width of terminal in characters."""
         try:
             return os.get_terminal_size()[0]
         except Exception:
             return 79
 
 
-    def get_line_length():
-        if config.line_length == 0:
-            return get_terminal_width()
+    def get_line_length(self):
+        """Calculated line length."""
+        if self.config.line_length == 0:
+            return self.get_terminal_width()
         else:
-            return config.line_length
+            return self.config.line_length
 
 
-    ansi_escape = re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
-
-
-    def visible_length(s):
+    def visible_length(self, s):
+        """Visible length of string (i.e. without ansi escape sequences)"""
         return len(ansi_escape.sub('', s))
 
 
-    def output_text(texts):
+    def output_text(self, texts):
+        """Write list of texts to stderr.
+        Use this function for all output.
+
+            texts: a string or a list of strings
+        """
         if not isinstance(texts, (list, tuple)):
             texts = [texts]
         count = 0
         for text in texts:
             text = str(text)
             sys.stderr.write(text)
-            count += visible_length(text)
-        line_length = get_line_length()
-        if count == 0 or count % line_length != 0 or config.full_line_newline:
+            count += self.visible_length(text)
+        line_length = self.get_line_length()
+        if count == 0 or count % line_length != 0 or self.config.full_line_newline:
             sys.stderr.write('\n')
         sys.stderr.write(reset_color)
-        if config.reset_stdout:
+        if self.config.reset_stdout:
             sys.stdout.write(reset_color)
 
 
-    def write_header():
-        if not config.separator_character: return
-        line_length = get_line_length()
-        if config.display_timestamp:
-            timestamp = str(config.timestamp_function())
-            separator = (line_length - len(timestamp)) * config.separator_character + timestamp
+    def write_header(self):
+        """Write stack trace header to screen.
+
+            Should make use of:
+                self.config.separator_character
+                self.config.display_timestamp
+                self.config.timestamp_function()
+                self.config.header_color"""
+        if not self.config.separator_character: return
+        line_length = self.get_line_length()
+        if self.config.display_timestamp:
+            timestamp = str(self.config.timestamp_function())
+            separator = (line_length - len(timestamp)) * self.config.separator_character + timestamp
         else:
-            separator = line_length * config.separator_character
-        output_text('')
-        output_text([config.header_color, separator])
+            separator = line_length * self.config.separator_character
+        self.output_text('')
+        self.output_text([self.config.header_color, separator])
 
 
-    def write_location(path, line, function):
+    def write_location(self, path, line, function):
+        """Write location of frame to screen.
+
+        Should make use of:
+            self.config.filename_display
+            self.config.filename_color
+            self.config.line_number_color
+            self.config.function_color
+            self.config.line_number_first
+            self.config.function_color
+            self.config.display_link
+            self.config.link_color
+        """
         line_number = str(line) + ' '
-        output_text('')
-        if config.filename_display == FILENAME_FULL:
+        self.output_text('')
+        if self.config.filename_display == FILENAME_FULL:
             filename = ""
-            output_text([config.filename_color, path])
-            output_text([config.line_number_color, line_number, config.function_color, function])
+            self.output_text([self.config.filename_color, path])
+            self.output_text([self.config.line_number_color, line_number, self.config.function_color, function])
         else:
-            if config.filename_display == FILENAME_EXTENDED:
-                line_length = get_line_length()
+            if self.config.filename_display == FILENAME_EXTENDED:
+                line_length = self.get_line_length()
                 filename = path[-(line_length - len(line_number) - len(function) - 4):]
                 if filename != path:
                     filename = '...' + filename
             else:
                 filename = os.path.basename(path)
-            if config.line_number_first:
-                output_text([
-                    config.line_number_color, line_number,
-                    config.function_color,    function + ' ',
-                    config.filename_color,    filename
+            if self.config.line_number_first:
+                self.output_text([
+                    self.config.line_number_color, line_number,
+                    self.config.function_color,    function + ' ',
+                    self.config.filename_color,    filename
                 ])
             else:
-                output_text([
-                    config.filename_color,    filename + ' ',
-                    config.line_number_color, line_number,
-                    config.function_color,    function
+                self.output_text([
+                    self.config.filename_color,    filename + ' ',
+                    self.config.line_number_color, line_number,
+                    self.config.function_color,    function
                 ])
-        if config.display_link:
-            output_text([config.link_color, '"%s", line %s' % (path, line)])
+        if self.config.display_link:
+            self.output_text([self.config.link_color, '"%s", line %s' % (path, line)])
 
 
-    def write_code(filepath, line, module_globals, is_final):
+    def write_code(self, filepath, line, module_globals, is_final):
+        """Write frame code to screen.
+        Parameters:
+            filepath:        path to code file
+            line:            line number in file
+            module_globals:  pass to linecache.getline()
+            is_final:        True if this is the last frame
+
+        Should make use of:
+            self.config.lines_before
+            self.config.lines_after
+            self.config.trace_lines_before
+            self.config.trace_lines_after
+            self.config.truncate_code
+            self.config.line_color
+            self.config.code_color
+        """
         if is_final:
-            target_line = config.lines_before
-            start = line - config.lines_before
-            end   = line + config.lines_after
+            target_line = self.config.lines_before
+            start = line - self.config.lines_before
+            end   = line + self.config.lines_after
         else:
-            target_line = config.trace_lines_before
-            start = line - config.trace_lines_before
-            end   = line + config.trace_lines_after
+            target_line = self.config.trace_lines_before
+            start = line - self.config.trace_lines_before
+            end   = line + self.config.trace_lines_after
 
         if start < 1:
             target_line -= (1 - start)
@@ -303,129 +444,167 @@ def excepthook(exception_type, exception_value, traceback):
         if min_lead > 0:
             lines = [line[min_lead:] for line in lines]
 
-        if config.truncate_code:
-            line_length = get_line_length()
+        if self.config.truncate_code:
+            line_length = self.get_line_length()
 
         for i, line in enumerate(lines):
             if i == target_line:
-                color = config.line_color
+                color = self.config.line_color
             else:
-                color = config.code_color
-            prefix_length = visible_length(color)
-            if config.truncate_code and len(line) + prefix_length > line_length:
+                color = self.config.code_color
+            prefix_length = self.visible_length(color)
+            if self.config.truncate_code and len(line) + prefix_length > line_length:
                 line = line[:line_length - prefix_length + 3] + '...'
-            output_text([color, line])
+            self.output_text([color, line])
 
         return '\n'.join(lines)
 
 
-    def exception_name(exception):
+    def exception_name(self, exception):
+        """Name of exception."""
         label = str(exception)
         if label.startswith("<class '"):
             label = label[8:-2]
         return label
 
 
-    def write_exception(exception_type, exception_value):
+    def write_exception(self, exception_type, exception_value):
+        """Write exception to screen.
+
+        Should make use of:
+            self.exception_name()
+            self.config.exception_color
+            self.config.exception_arg_color
+        """
         if exception_value and len(exception_value.args) > 0:
-            output_text([
-                config.exception_color, exception_name(exception_type), ':\n',
-                config.exception_arg_color, '\n'.join((str(x) for x in exception_value.args))
+            self.output_text([
+                self.config.exception_color, self.exception_name(exception_type), ':\n',
+                self.config.exception_arg_color, '\n'.join((str(x) for x in exception_value.args))
             ])
         else:
-            output_text([config.exception_color, exception_name(exception_type)])
+            self.output_text([self.config.exception_color, self.exception_name(exception_type)])
 
 
-    write_header()
+exception_writer = ExceptionWriter()
 
-    if config.prefix != None:
-        sys.stderr.write(config.prefix)
+
+
+def excepthook(exception_type, exception_value, traceback):
+    "Replaces sys.excepthook to output pretty errors."
+
+    writer = exception_writer
+    writer.config = writer.default_config = config
+
+    def check_for_pathed_config(path):
+        writer.config = writer.default_config
+        for config_path in config_paths:
+            if path.startswith(config_path):
+                writer.config = config_paths[config_path]
+                break
+
+    tb = traceback
+    while tb != None and tb.tb_next != None:
+        tb = tb.tb_next
+    check_for_pathed_config(os.path.normpath(tb.tb_frame.f_code.co_filename).lower())
+    writer.default_config = writer.config
+
+    writer.write_header()
+
+    if writer.config.prefix != None:
+        sys.stderr.write(writer.config.prefix)
 
     syntax_error_info = None
     if exception_type == SyntaxError:
         syntax_error_info = exception_value.args[1]
         exception_value.args = [exception_value.args[0]]
 
-    if config.exception_above:
-        output_text('')
-        write_exception(exception_type, exception_value)
+    if writer.config.exception_above:
+        writer.output_text('')
+        writer.write_exception(exception_type, exception_value)
 
     if syntax_error_info:
-        write_location(syntax_error_info[0], syntax_error_info[1], '')
-        write_code(syntax_error_info[0], syntax_error_info[1], [], True)
+        check_for_pathed_config(os.path.normpath(syntax_error_info[0]).lower())
+        writer.write_location(syntax_error_info[0], syntax_error_info[1], '')
+        writer.write_code(syntax_error_info[0], syntax_error_info[1], [], True)
     else:
         tracebacks = []
         while traceback != None:
             path = os.path.normpath(traceback.tb_frame.f_code.co_filename).lower()
-            if traceback.tb_next == None or (config.always_display_bottom and tracebacks == []):
+            if traceback.tb_next == None or (writer.config.always_display_bottom and tracebacks == []):
                 tracebacks.append(traceback)
             else:
-                if config.whitelist_paths:
-                    for white in config.whitelist_paths:
+                if whitelist_paths:
+                    for white in whitelist_paths:
                         if path.startswith(white): break
                     else:
                         traceback = traceback.tb_next
                         continue
-                for black in config.blacklist_paths:
+                for black in blacklist_paths:
                     if path.startswith(black): break
                 else:
                     tracebacks.append(traceback)
             traceback = traceback.tb_next
 
-        if config.top_first:
+        if writer.config.top_first:
             tracebacks.reverse()
-            if config.stack_depth > 0:
-                if config.always_display_bottom and len(tracebacks) > 1:
-                    tracebacks = tracebacks[:config.stack_depth] + tracebacks[-1:]
+            if writer.config.stack_depth > 0:
+                if writer.config.always_display_bottom and len(tracebacks) > 1:
+                    tracebacks = tracebacks[:writer.config.stack_depth] + tracebacks[-1:]
                 else:
-                    tracebacks = tracebacks[:config.stack_depth]
+                    tracebacks = tracebacks[:writer.config.stack_depth]
             final = 0
         else:
-            if config.stack_depth > 0:
-                if config.always_display_bottom and len(tracebacks) > 1:
-                    tracebacks = tracebacks[:1] + tracebacks[-config.stack_depth:]
+            if writer.config.stack_depth > 0:
+                if writer.config.always_display_bottom and len(tracebacks) > 1:
+                    tracebacks = tracebacks[:1] + tracebacks[-writer.config.stack_depth:]
                 else:
-                    tracebacks = tracebacks[-config.stack_depth:]
+                    tracebacks = tracebacks[-writer.config.stack_depth:]
             final = len(tracebacks) - 1
 
         for count, traceback in enumerate(tracebacks):
-            if config.infix != None and count != 0:
-                sys.stderr.write(config.infix)
+            path = os.path.normpath(traceback.tb_frame.f_code.co_filename).lower()
+            check_for_pathed_config(path)
+
+            if writer.config.infix != None and count != 0:
+                sys.stderr.write(writer.config.infix)
 
             frame = traceback.tb_frame
             code = frame.f_code
-            write_location(code.co_filename, traceback.tb_lineno, code.co_name)
-            code_string = write_code(code.co_filename, traceback.tb_lineno, frame.f_globals, count == final)
+            writer.write_location(code.co_filename, traceback.tb_lineno, code.co_name)
+            code_string = writer.write_code(code.co_filename, traceback.tb_lineno, frame.f_globals, count == final)
 
-            if (config.display_locals and count == final) or (config.display_trace_locals and count != final):
+            if (writer.config.display_locals and count == final) or (writer.config.display_trace_locals and count != final):
                 local_variables = [(code_string.find(x), x) for x in frame.f_locals]
                 local_variables.sort()
                 local_variables = [x[1] for x in local_variables if x[0] >= 0]
                 if local_variables:
-                    output_text('')
+                    writer.output_text('')
                     spacer = ': '
                     len_spacer = '... '
-                    line_length = get_line_length()
+                    line_length = writer.get_line_length()
                     for local in local_variables:
                         value = str(frame.f_locals[local])
-                        output = [config.local_name_color, local, spacer, config.local_value_color]
-                        if config.truncate_locals and len(local) + len(spacer) + len(value) > line_length:
+                        output = [writer.config.local_name_color, local, spacer, writer.config.local_value_color]
+                        if writer.config.truncate_locals and len(local) + len(spacer) + len(value) > line_length:
                             length = '[' + str(len(value)) + ']'
                             value = value[:line_length - (len(local) + len(spacer) + len(len_spacer) + len(length))]
-                            output += [value, len_spacer, config.local_len_color, length]
+                            output += [value, len_spacer, writer.config.local_len_color, length]
                         else:
                             output += [value]
-                        output_text(output)
+                        writer.output_text(output)
 
-    if config.exception_below:
-        output_text('')
-        write_exception(exception_type, exception_value)
+    writer.config = writer.default_config
 
-    if config.postfix != None:
-        sys.stderr.write(config.postfix)
+    if writer.config.exception_below:
+        writer.output_text('')
+        writer.write_exception(exception_type, exception_value)
+
+    if writer.config.postfix != None:
+        sys.stderr.write(writer.config.postfix)
 
 
-sys.excepthook = excepthook
+if _active:
+    sys.excepthook = excepthook
 
 
 
@@ -591,5 +770,4 @@ if __name__ == "__main__":
         display_locals=True,
         postfix='\n'
     )
-    mono()
     raise KeyError("Testing testing")
