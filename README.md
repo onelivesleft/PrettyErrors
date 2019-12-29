@@ -2,14 +2,14 @@
 
 Prettifies Python exception output to make it legible. Install it with
 ```bash
-python -m pip install pretty-errors
+python -m pip install pretty_errors
 ```
 
-If you want `pretty-errors` to be used whenever you run a python script you must add it to your python startup procedure.  You can do so easily by running:
-```
+If you want `pretty_errors` to be used whenever you run a python script you must add it to your python startup procedure.  You can do so easily by running:
+```bash
 python -m pretty_errors
 ```
-This is the recommended way to use `pretty-errors`; apart from being simpler and universal, using it will mean `SyntaxError` exceptions also get formatted prettily (which doesn't work if you are manually importing `pretty-errors`).
+This is the recommended way to use `pretty_errors`; apart from being simpler and universal, using it will mean `SyntaxError` exceptions also get formatted prettily (which doesn't work if you are manually importing `pretty_errors`).
 
 ---
 
@@ -59,6 +59,15 @@ meh.line_color = meh.code_color = meh.filename_color = meh.function_color = meh.
     pretty_errors.default_config.header_color
 )
 pretty_errors.pathed_config(meh, 'c:/python')
+```
+
+---
+
+##### Environment Variable
+
+You may temporarily disable `pretty_errors` by setting the environment variable `PYTHON_PRETTY_ERRORS` to `0`.  i.e. at a command prompt:
+```bash
+set PYTHON_PRETTY_ERRORS=0
 ```
 
 ---
