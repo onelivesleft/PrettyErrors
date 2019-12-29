@@ -23,7 +23,7 @@ import pretty_errors
 ```
 Note you need to be running in a terminal capable of colour output in order to get colour output: in Windows this means powershell, cmder, etc.  If you must use a monochrome terminal then you can call the helper function `pretty_errors.mono()`, which will set some config options in a way that is useful for monochrome output.
 
-If you want to configure the output then use `pretty_errors.configure()`, `pretty_errors.whitelist()`, `pretty_errors.blacklist()`.  For example:
+If you want to configure the output then use `pretty_errors.configure()`, `pretty_errors.whitelist()`, `pretty_errors.blacklist()`, `pretty_errors.pathed_config()`.  For example:
 ```python
 import pretty_errors
 pretty_errors.configure(
@@ -46,6 +46,20 @@ pretty_errors.blacklist('c:/python')
 ##### Whitelist / Blacklist:
 
 You may use the functions `whitelist(path)` and `blacklist(path)` to add paths which will be necessary (`whitelist`) or excluded (`blacklist`).  The top frame of the stack is never excluded.
+
+---
+
+##### Pathed Configurations
+
+You may set up alternate configurations, which are triggered by the path to the code file of the frame.  For example, if you were not interested in the system frames (those under 'c:/python') but did not want to hide them completely by using the `blacklist` you could do this:
+
+```python
+irrelevant = pretty_errors.config.copy()
+irrelevant.line_color = irrelevant.code_color = irrelevant.filename_color = irrelevant.function_color = irrelevant.line_number_color = (
+    pretty_errors.default_config.header_color
+)
+pretty_errors.pathed_config(irrelevant, 'c:/python')
+```
 
 ---
 
@@ -164,3 +178,21 @@ Escape sequence to set the color of local variable values.
 
 * `local_len_color`<br>
 Escape sequence to set the color of local value length when local is truncated.
+
+---
+
+##### Further customization
+
+For the most extensive customization (short of forking the package) you may override the default `ExceptionWriter` class, allowing you to tailor the output however you wish.  Typically you will only need to override the `write_` methods.
+
+For example:
+
+```python
+class MyExceptionWriter(pretty_errors.ExceptionWriter):
+    def write_header(self):
+        self.output_text('######## ERROR ########')
+
+pretty_errors.exception_writer = MyExceptionWriter()
+```
+
+Run `help(pretty_errors.ExceptionWriter)` in the python interpreter for more details.
