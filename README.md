@@ -133,6 +133,9 @@ When enabled, local variables appearing in other stack frame code will be displa
 * `truncate_locals`<br>
 When enabled the values of displayed local variables will be truncated to fit the line length.
 
+* `arrow_head_character`, `arrow_tail_character`<br>
+Characters used to draw the arrow which points at syntax errors.
+
 * `prefix`<br>
 Text string which is displayed at the top of the report, just below the header.
 
@@ -178,6 +181,12 @@ Escape sequence to set the color of the line of code which caused the exception.
 
 * `code_color`<br>
 Escape sequence to set the color of other displayed lines of code.
+
+* `arrow_head_color`, `arrow_tail_color`<br>
+Escape sequence to set the color of the arrow which points at syntax errors.
+
+* `syntax_error_color`<br>
+Escape sequence to set the color of the syntax error token.
 
 * `local_name_color`<br>
 Escape sequence to set the color of local variable names.

@@ -1,3 +1,15 @@
+# v1.2.6
+
+* Fixed `pathed_config` bug.
+* Added arrow pointing to syntax error.
+* Added config options `arrow_head_character`, `arrow_head_color`, `arrow_tail_character`, `arrow_tail_color`, `syntax_error_color`
+
+
+# v1.2.5
+
+* Fix comment skeleton in *customize.py output.
+
+
 # v1.2.4
 
 * README updated.

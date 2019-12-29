@@ -43,6 +43,8 @@ class PrettyErrorsConfig():
             self.display_trace_locals   = False
             self.truncate_locals        = True
             self.truncate_code          = False
+            self.arrow_tail_character   = '-'
+            self.arrow_head_character   = '^'
             self.header_color           = '\033[1;30m'
             self.timestamp_color        = '\033[1;30m'
             self.line_color             = '\033[1;38m'
@@ -56,6 +58,9 @@ class PrettyErrorsConfig():
             self.local_len_color        = '\033[1;30m'
             self.exception_color        = '\033[1;31m'
             self.exception_arg_color    = '\033[1;33m'
+            self.syntax_error_color     = '\033[1;32m'
+            self.arrow_tail_color       = '\033[1;32m'
+            self.arrow_head_color       = '\033[1;32m'
             self.prefix                 = None
             self.infix                  = None
             self.postfix                = None
@@ -82,6 +87,8 @@ class PrettyErrorsConfig():
             self.display_trace_locals   = instance.display_trace_locals
             self.truncate_locals        = instance.truncate_locals
             self.truncate_code          = instance.truncate_code
+            self.arrow_tail_character   = instance.arrow_tail_character
+            self.arrow_head_character   = instance.arrow_head_character
             self.header_color           = instance.header_color
             self.timestamp_color        = instance.timestamp_color
             self.line_color             = instance.line_color
@@ -95,6 +102,9 @@ class PrettyErrorsConfig():
             self.local_len_color        = instance.local_len_color
             self.exception_color        = instance.exception_color
             self.exception_arg_color    = instance.exception_arg_color
+            self.syntax_error_color     = instance.syntax_error_color
+            self.arrow_tail_color       = instance.arrow_tail_color
+            self.arrow_head_color       = instance.arrow_head_color
             self.prefix                 = instance.prefix
             self.infix                  = instance.infix
             self.postfix                = instance.postfix
@@ -130,6 +140,8 @@ class PrettyErrorsConfig():
         c.display_trace_locals   = self.display_trace_locals
         c.truncate_locals        = self.truncate_locals
         c.truncate_code          = self.truncate_code
+        c.arrow_tail_character   = self.arrow_tail_character
+        c.arrow_head_character   = self.arrow_head_character
         c.header_color           = self.header_color
         c.timestamp_color        = self.timestamp_color
         c.line_color             = self.line_color
@@ -143,6 +155,9 @@ class PrettyErrorsConfig():
         c.local_len_color        = self.local_len_color
         c.exception_color        = self.exception_color
         c.exception_arg_color    = self.exception_arg_color
+        c.syntax_error_color     = self.syntax_error_color
+        c.arrow_tail_color       = self.arrow_tail_color
+        c.arrow_head_color       = self.arrow_head_color
         c.prefix                 = self.prefix
         c.infix                  = self.infix
         c.postfix                = self.postfix
@@ -158,84 +173,94 @@ default_config = PrettyErrorsConfig()
 
 def configure(
         always_display_bottom = None,
-        code_color = None,
-        display_link = None,
-        display_locals = None,
-        display_timestamp = None,
-        display_trace_locals = None,
-        exception_above = None,
-        exception_arg_color = None,
-        exception_below = None,
-        exception_color = None,
-        filename_color = None,
-        filename_display = None,
-        full_line_newline = None,
-        function_color = None,
-        header_color = None,
-        infix = None,
-        line_color = None,
-        line_length = None,
-        line_number_color = None,
-        line_number_first = None,
-        lines_after = None,
-        lines_before = None,
-        link_color = None,
-        local_len_color = None,
-        local_name_color = None,
-        local_value_color = None,
-        postfix = None,
-        prefix = None,
-        reset_stdout = None,
-        separator_character = None,
-        stack_depth = None,
-        timestamp_color = None,
-        timestamp_function = None,
-        top_first = None,
-        trace_lines_after = None,
-        trace_lines_before = None,
-        truncate_code = None,
-        truncate_locals = None
+        arrow_head_character  = None,
+        arrow_tail_character  = None,
+        arrow_head_color      = None,
+        arrow_tail_color      = None,
+        code_color            = None,
+        display_link          = None,
+        display_locals        = None,
+        display_timestamp     = None,
+        display_trace_locals  = None,
+        exception_above       = None,
+        exception_arg_color   = None,
+        exception_below       = None,
+        exception_color       = None,
+        filename_color        = None,
+        filename_display      = None,
+        full_line_newline     = None,
+        function_color        = None,
+        header_color          = None,
+        infix                 = None,
+        line_color            = None,
+        line_length           = None,
+        line_number_color     = None,
+        line_number_first     = None,
+        lines_after           = None,
+        lines_before          = None,
+        link_color            = None,
+        local_len_color       = None,
+        local_name_color      = None,
+        local_value_color     = None,
+        postfix               = None,
+        prefix                = None,
+        reset_stdout          = None,
+        separator_character   = None,
+        stack_depth           = None,
+        syntax_error_color    = None,
+        timestamp_color       = None,
+        timestamp_function    = None,
+        top_first             = None,
+        trace_lines_after     = None,
+        trace_lines_before    = None,
+        truncate_code         = None,
+        truncate_locals       = None
         ):
     """Configure settings governing how exceptions are displayed."""
     config.configure(
-        always_display_bottom  = always_display_bottom,
-        code_color             = code_color,
-        display_link           = display_link,
-        display_locals         = display_locals,
-        display_timestamp      = display_timestamp,
-        display_trace_locals   = display_trace_locals,
-        exception_above        = exception_above,
-        exception_arg_color    = exception_arg_color,
-        exception_below        = exception_below,
-        exception_color        = exception_color,
-        filename_color         = filename_color,
-        filename_display       = filename_display,
-        full_line_newline      = full_line_newline,
-        function_color         = function_color,
-        header_color           = header_color,
-        infix                  = infix,
-        line_color             = line_color,
-        line_length            = line_length,
-        line_number_color      = line_number_color,
-        line_number_first      = line_number_first,
-        lines_after            = lines_after,
-        lines_before           = lines_before,
-        link_color             = link_color,
-        local_len_color        = local_len_color,
-        local_name_color       = local_name_color,
-        local_value_color      = local_value_color,
-        postfix                = postfix,
-        prefix                 = prefix,
-        reset_stdout           = reset_stdout,
-        separator_character    = separator_character,
-        stack_depth            = stack_depth,
-        timestamp_color        = timestamp_color,
-        timestamp_function     = timestamp_function,
-        top_first              = top_first,
-        trace_lines_after      = trace_lines_after,
-        trace_lines_before     = trace_lines_before,
-        truncate_code          = truncate_code,
-        truncate_locals        = truncate_locals
+        always_display_bottom = always_display_bottom,
+        arrow_head_character  = arrow_head_character,
+        arrow_tail_character  = arrow_tail_character,
+        arrow_head_color      = arrow_head_color,
+        arrow_tail_color      = arrow_tail_color,
+        code_color            = code_color,
+        display_link          = display_link,
+        display_locals        = display_locals,
+        display_timestamp     = display_timestamp,
+        display_trace_locals  = display_trace_locals,
+        exception_above       = exception_above,
+        exception_arg_color   = exception_arg_color,
+        exception_below       = exception_below,
+        exception_color       = exception_color,
+        filename_color        = filename_color,
+        filename_display      = filename_display,
+        full_line_newline     = full_line_newline,
+        function_color        = function_color,
+        header_color          = header_color,
+        infix                 = infix,
+        line_color            = line_color,
+        line_length           = line_length,
+        line_number_color     = line_number_color,
+        line_number_first     = line_number_first,
+        lines_after           = lines_after,
+        lines_before          = lines_before,
+        link_color            = link_color,
+        local_len_color       = local_len_color,
+        local_name_color      = local_name_color,
+        local_value_color     = local_value_color,
+        postfix               = postfix,
+        prefix                = prefix,
+        reset_stdout          = reset_stdout,
+        separator_character   = separator_character,
+        stack_depth           = stack_depth,
+        syntax_error_color    = syntax_error_color,
+        timestamp_color       = timestamp_color,
+        timestamp_function    = timestamp_function,
+        top_first             = top_first,
+        trace_lines_after     = trace_lines_after,
+        trace_lines_before    = trace_lines_before,
+        truncate_code         = truncate_code,
+        truncate_locals       = truncate_locals
     )
 
 
@@ -243,21 +268,24 @@ def mono():
     global reset_color
     reset_color = ''
     configure(
-        infix = '\n---\n',
-        line_number_first = True,
-        code_color = '| ',
+        infix               = '\n---\n',
+        line_number_first   = True,
+        code_color          = '| ',
         exception_arg_color = '',
-        exception_color = '',
-        filename_color = '',
-        function_color = '',
-        header_color = '',
-        line_color = '> ',
-        line_number_color = '',
-        link_color = '',
-        local_len_color = '',
-        local_name_color = '= ',
-        local_value_color = '',
-        timestamp_color = '',
+        exception_color     = '',
+        filename_color      = '',
+        function_color      = '',
+        header_color        = '',
+        line_color          = '> ',
+        line_number_color   = '',
+        link_color          = '',
+        local_len_color     = '',
+        local_name_color    = '= ',
+        local_value_color   = '',
+        timestamp_color     = '',
+        arrow_head_color    = '',
+        arrow_tail_color    = '',
+        syntax_error_color  = ''
     )
 
 
@@ -400,13 +428,14 @@ class ExceptionWriter():
             self.output_text([self.config.link_color, '"%s", line %s' % (path, line)])
 
 
-    def write_code(self, filepath, line, module_globals, is_final):
+    def write_code(self, filepath, line, module_globals, is_final, point_at = None):
         """Write frame code to screen.
         Parameters:
             filepath:        path to code file
             line:            line number in file
             module_globals:  pass to linecache.getline()
             is_final:        True if this is the last frame
+            point_at:        character position to point at
 
         Should make use of:
             self.config.lines_before
@@ -414,8 +443,13 @@ class ExceptionWriter():
             self.config.trace_lines_before
             self.config.trace_lines_after
             self.config.truncate_code
+            self.config.arrow_head_character
+            self.config.arrow_tail_character
             self.config.line_color
             self.config.code_color
+            self.config.arrow_head_color
+            self.config.arrow_tail_color
+            self.config.syntax_error_color
         """
         if is_final:
             target_line = self.config.lines_before
@@ -444,18 +478,38 @@ class ExceptionWriter():
         if min_lead > 0:
             lines = [line[min_lead:] for line in lines]
 
-        if self.config.truncate_code:
-            line_length = self.get_line_length()
+        line_length = self.get_line_length()
 
         for i, line in enumerate(lines):
             if i == target_line:
                 color = self.config.line_color
+                if point_at is not None:
+                    point_at -= (min_lead + 1)
             else:
                 color = self.config.code_color
-            prefix_length = self.visible_length(color)
-            if self.config.truncate_code and len(line) + prefix_length > line_length:
-                line = line[:line_length - prefix_length + 3] + '...'
-            self.output_text([color, line])
+            color_length = self.visible_length(color)
+            if self.config.truncate_code and len(line) + color_length > line_length:
+                line = line[:line_length - color_length + 3] + '...'
+            if i == target_line and point_at is not None:
+                if point_at > line_length:
+                    point_at = line_length
+                start_char = point_at
+                while start_char > 0 and line[start_char - 1] not in (' ', '\t'):
+                    start_char -= 1
+                end_char = point_at + 1
+                while end_char < len(line) - 1 and line[end_char] not in (' ', '\t'):
+                    end_char += 1
+                self.output_text([
+                    color, line[:start_char], reset_color,
+                    self.config.syntax_error_color, line[start_char:end_char], reset_color,
+                    color, line[end_char:]
+                ])
+                self.output_text([
+                    self.config.arrow_tail_color, self.config.arrow_tail_character * point_at,
+                    self.config.arrow_head_color, self.config.arrow_head_character
+                ])
+            else:
+                self.output_text([color, line])
 
         return '\n'.join(lines)
 
@@ -502,11 +556,12 @@ def excepthook(exception_type, exception_value, traceback):
                 writer.config = config_paths[config_path]
                 break
 
-    tb = traceback
-    while tb != None and tb.tb_next != None:
-        tb = tb.tb_next
-    check_for_pathed_config(os.path.normpath(tb.tb_frame.f_code.co_filename).lower())
-    writer.default_config = writer.config
+    if traceback:
+        tb = traceback
+        while tb.tb_next != None:
+            tb = tb.tb_next
+        check_for_pathed_config(os.path.normpath(tb.tb_frame.f_code.co_filename).lower())
+        writer.default_config = writer.config
 
     writer.write_header()
 
@@ -525,7 +580,7 @@ def excepthook(exception_type, exception_value, traceback):
     if syntax_error_info:
         check_for_pathed_config(os.path.normpath(syntax_error_info[0]).lower())
         writer.write_location(syntax_error_info[0], syntax_error_info[1], '')
-        writer.write_code(syntax_error_info[0], syntax_error_info[1], [], True)
+        writer.write_code(syntax_error_info[0], syntax_error_info[1], [], True, syntax_error_info[2])
     else:
         tracebacks = []
         while traceback != None:
@@ -708,6 +763,10 @@ import pretty_errors
 # Use to only show frames whose file begins with these paths:
 #pretty_errors.whitelist('/path/to/whitelist', '/other/path/to/whitelist', ...)
 
+# Use to selectively set a config based on the path to the code of the current frame.
+#alternate_config = pretty_errors.config.copy()
+#pretty_errors.pathed_config(alternate_config, '/use/alternate/for/this/path')
+
 # Use to configure output:
 """pretty_errors.configure(
     ''')
@@ -719,7 +778,7 @@ import pretty_errors
             for option in dir(config):
                 if len(option) > max_length:
                     max_length = len(option)
-                if (option not in ('configure', 'mono', 'whitelist_paths', 'blacklist_paths') and
+                if (option not in ('configure', 'mono', 'copy') and
                         not option.startswith('_')):
                     if option.endswith('_color'):
                         colors.append(option)
