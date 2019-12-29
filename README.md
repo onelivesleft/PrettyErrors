@@ -54,11 +54,11 @@ You may use the functions `whitelist(path)` and `blacklist(path)` to add paths w
 You may set up alternate configurations, which are triggered by the path to the code file of the frame.  For example, if you were not interested in the system frames (those under 'c:/python') but did not want to hide them completely by using the `blacklist` you could do this:
 
 ```python
-irrelevant = pretty_errors.config.copy()
-irrelevant.line_color = irrelevant.code_color = irrelevant.filename_color = irrelevant.function_color = irrelevant.line_number_color = (
+meh = pretty_errors.config.copy()
+meh.line_color = meh.code_color = meh.filename_color = meh.function_color = meh.line_number_color = (
     pretty_errors.default_config.header_color
 )
-pretty_errors.pathed_config(irrelevant, 'c:/python')
+pretty_errors.pathed_config(meh, 'c:/python')
 ```
 
 ---
