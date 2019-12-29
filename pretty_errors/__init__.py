@@ -497,8 +497,8 @@ class ExceptionWriter():
             if self.config.truncate_code and len(line) + color_length > line_length:
                 line = line[:line_length - color_length + 3] + '...'
             if i == target_line and point_at is not None:
-                if point_at > line_length:
-                    point_at = line_length
+                if point_at >= line_length:
+                    point_at = line_length - 1
                 start_char = point_at
                 while start_char > 0 and line[start_char - 1] not in (' ', '\t'):
                     start_char -= 1
