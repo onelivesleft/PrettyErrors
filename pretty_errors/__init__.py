@@ -43,6 +43,7 @@ class PrettyErrorsConfig():
             self.display_trace_locals   = False
             self.truncate_locals        = True
             self.truncate_code          = False
+            self.display_arrow          = True
             self.arrow_tail_character   = '-'
             self.arrow_head_character   = '^'
             self.header_color           = '\033[1;30m'
@@ -87,6 +88,7 @@ class PrettyErrorsConfig():
             self.display_trace_locals   = instance.display_trace_locals
             self.truncate_locals        = instance.truncate_locals
             self.truncate_code          = instance.truncate_code
+            self.display_arrow          = instance.display_arrow
             self.arrow_tail_character   = instance.arrow_tail_character
             self.arrow_head_character   = instance.arrow_head_character
             self.header_color           = instance.header_color
@@ -140,6 +142,7 @@ class PrettyErrorsConfig():
         c.display_trace_locals   = self.display_trace_locals
         c.truncate_locals        = self.truncate_locals
         c.truncate_code          = self.truncate_code
+        c.display_arrow          = self.display_arrow
         c.arrow_tail_character   = self.arrow_tail_character
         c.arrow_head_character   = self.arrow_head_character
         c.header_color           = self.header_color
@@ -178,6 +181,7 @@ def configure(
         arrow_head_color      = None,
         arrow_tail_color      = None,
         code_color            = None,
+        display_arrow         = None,
         display_link          = None,
         display_locals        = None,
         display_timestamp     = None,
@@ -224,6 +228,7 @@ def configure(
         arrow_head_color      = arrow_head_color,
         arrow_tail_color      = arrow_tail_color,
         code_color            = code_color,
+        display_arrow         = display_arrow,
         display_link          = display_link,
         display_locals        = display_locals,
         display_timestamp     = display_timestamp,
@@ -443,6 +448,7 @@ class ExceptionWriter():
             self.config.trace_lines_before
             self.config.trace_lines_after
             self.config.truncate_code
+            self.config.display_arrow
             self.config.arrow_head_character
             self.config.arrow_tail_character
             self.config.line_color
@@ -504,10 +510,11 @@ class ExceptionWriter():
                     self.config.syntax_error_color, line[start_char:end_char], reset_color,
                     color, line[end_char:]
                 ])
-                self.output_text([
-                    self.config.arrow_tail_color, self.config.arrow_tail_character * point_at,
-                    self.config.arrow_head_color, self.config.arrow_head_character
-                ])
+                if self.config.display_arrow:
+                    self.output_text([
+                        self.config.arrow_tail_color, self.config.arrow_tail_character * point_at,
+                        self.config.arrow_head_color, self.config.arrow_head_character
+                    ])
             else:
                 self.output_text([color, line])
 
@@ -658,8 +665,13 @@ def excepthook(exception_type, exception_value, traceback):
         sys.stderr.write(writer.config.postfix)
 
 
-if _active:
+def activate():
+    """Set sys.excepthook to use pretty errors."""
     sys.excepthook = excepthook
+
+
+if _active:
+    activate()
 
 
 

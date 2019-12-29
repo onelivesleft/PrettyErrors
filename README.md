@@ -70,6 +70,8 @@ You may temporarily disable `pretty_errors` by setting the environment variable 
 set PYTHON_PRETTY_ERRORS=0
 ```
 
+Calling `pretty_errors.activate()` will override this.
+
 ---
 
 ##### Configuration settings:
@@ -132,6 +134,9 @@ When enabled, local variables appearing in other stack frame code will be displa
 
 * `truncate_locals`<br>
 When enabled the values of displayed local variables will be truncated to fit the line length.
+
+* `display_arrow`<br>
+When enabled an arrow will be displayed for syntax errors, pointing at the offending token.
 
 * `arrow_head_character`, `arrow_tail_character`<br>
 Characters used to draw the arrow which points at syntax errors.
