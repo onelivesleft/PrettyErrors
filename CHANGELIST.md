@@ -1,3 +1,8 @@
+# v1.2.4
+
+* README updated.
+
+
 # v1.2.3
 
 * Added `ExceptionWriter` class to allow for overriding.
