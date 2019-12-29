@@ -56,7 +56,7 @@ You may set up alternate configurations, which are triggered by the path to the 
 ```python
 meh = pretty_errors.config.copy()
 meh.line_color = meh.code_color = meh.filename_color = meh.function_color = meh.line_number_color = (
-    pretty_errors.default_config.header_color
+    pretty_errors.GREY
 )
 pretty_errors.pathed_config(meh, 'c:/python')
 ```
@@ -201,6 +201,27 @@ Escape sequence to set the color of local variable values.
 
 * `local_len_color`<br>
 Escape sequence to set the color of local value length when local is truncated.
+
+`pretty_errors` has some built in escape sequence constants you can use when setting these colors:
+
+* `BLACK`
+* `GREY`
+* `RED`
+* `GREEN`
+* `YELLOW`
+* `BLUE`
+* `MAGENTA`
+* `CYAN`
+* `WHITE`
+
+For each color there is a matching `BRIGHT_` variant (i.e. `pretty_errors.BRIGHT_RED`), as well as a `_BACKGROUND` variant to set the background color (i.e. `pretty_errors.RED_BACKGROUND`).
+
+For example:
+```python
+pretty_errors.configure(
+    line_color = pretty_errors.CYAN_BACKGROUND + pretty_errors.BRIGHT_WHITE
+)
+```
 
 ---
 

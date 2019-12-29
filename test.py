@@ -8,7 +8,7 @@ pretty_errors.configure(
 )
 irrelevant = pretty_errors.config.copy()
 irrelevant.line_color = irrelevant.code_color = irrelevant.filename_color = irrelevant.function_color = irrelevant.line_number_color = (
-    pretty_errors.default_config.header_color
+    pretty_errors.GREY
 )
 pretty_errors.pathed_config(irrelevant, 'c:/python', 'c:/users')
 raise KeyError

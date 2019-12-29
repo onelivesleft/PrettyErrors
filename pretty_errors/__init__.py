@@ -6,15 +6,46 @@ name = "pretty_errors"
 _env_label = 'PYTHON_PRETTY_ERRORS'
 _active = _env_label not in os.environ or os.environ[_env_label] != '0'
 
+
 FILENAME_COMPACT  = 0
 FILENAME_EXTENDED = 1
 FILENAME_FULL     = 2
 
+RESET_COLOR = '\033[m'
+
+BLACK   = '\033[0;30m'
+RED     = '\033[0;31m'
+GREEN   = '\033[0;32m'
+YELLOW  = '\033[0;33m'
+BLUE    = '\033[0;34m'
+MAGENTA = '\033[0;35m'
+CYAN    = '\033[0;36m'
+WHITE   = '\033[0;37m'
+
+BRIGHT_BLACK   = GREY = '\033[1;30m'
+BRIGHT_RED     = '\033[1;31m'
+BRIGHT_GREEN   = '\033[1;32m'
+BRIGHT_YELLOW  = '\033[1;33m'
+BRIGHT_BLUE    = '\033[1;34m'
+BRIGHT_MAGENTA = '\033[1;35m'
+BRIGHT_CYAN    = '\033[1;36m'
+BRIGHT_WHITE   = '\033[1;37m'
+
+BLACK_BACKGROUND   = '\033[40m'
+RED_BACKGROUND     = '\033[41m'
+GREEN_BACKGROUND   = '\033[42m'
+YELLOW_BACKGROUND  = '\033[43m'
+BLUE_BACKGROUND    = '\033[44m'
+MAGENTA_BACKGROUND = '\033[45m'
+CYAN_BACKGROUND    = '\033[46m'
+WHITE_BACKGROUND   = '\033[47m'
+
+
 ansi_escape = re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
-reset_color = '\033[m'
 whitelist_paths = []
 blacklist_paths = []
 config_paths = {}
+
 
 class PrettyErrorsConfig():
     def __init__(self, instance = None):
@@ -46,22 +77,22 @@ class PrettyErrorsConfig():
             self.display_arrow          = True
             self.arrow_tail_character   = '-'
             self.arrow_head_character   = '^'
-            self.header_color           = '\033[1;30m'
-            self.timestamp_color        = '\033[1;30m'
-            self.line_color             = '\033[1;38m'
-            self.code_color             = '\033[1;30m'
-            self.filename_color         = '\033[1;36m'
-            self.line_number_color      = '\033[1;32m'
-            self.function_color         = '\033[1;34m'
-            self.link_color             = '\033[1;30m'
-            self.local_name_color       = '\033[1;35m'
-            self.local_value_color      = '\033[m'
-            self.local_len_color        = '\033[1;30m'
-            self.exception_color        = '\033[1;31m'
-            self.exception_arg_color    = '\033[1;33m'
-            self.syntax_error_color     = '\033[1;32m'
-            self.arrow_tail_color       = '\033[1;32m'
-            self.arrow_head_color       = '\033[1;32m'
+            self.header_color           = GREY
+            self.timestamp_color        = GREY
+            self.line_color             = BRIGHT_WHITE
+            self.code_color             = GREY
+            self.filename_color         = BRIGHT_CYAN
+            self.line_number_color      = BRIGHT_GREEN
+            self.function_color         = BRIGHT_BLUE
+            self.link_color             = GREY
+            self.local_name_color       = BRIGHT_MAGENTA
+            self.local_value_color      = RESET_COLOR
+            self.local_len_color        = GREY
+            self.exception_color        = BRIGHT_RED
+            self.exception_arg_color    = BRIGHT_YELLOW
+            self.syntax_error_color     = BRIGHT_GREEN
+            self.arrow_tail_color       = BRIGHT_GREEN
+            self.arrow_head_color       = BRIGHT_GREEN
             self.prefix                 = None
             self.infix                  = None
             self.postfix                = None
@@ -270,8 +301,8 @@ def configure(
 
 
 def mono():
-    global reset_color
-    reset_color = ''
+    global RESET_COLOR
+    RESET_COLOR = ''
     configure(
         infix               = '\n---\n',
         line_number_first   = True,
@@ -366,9 +397,9 @@ class ExceptionWriter():
         line_length = self.get_line_length()
         if count == 0 or count % line_length != 0 or self.config.full_line_newline:
             sys.stderr.write('\n')
-        sys.stderr.write(reset_color)
+        sys.stderr.write(RESET_COLOR)
         if self.config.reset_stdout:
-            sys.stdout.write(reset_color)
+            sys.stdout.write(RESET_COLOR)
 
 
     def write_header(self):
@@ -506,8 +537,8 @@ class ExceptionWriter():
                 while end_char < len(line) - 1 and line[end_char] not in (' ', '\t'):
                     end_char += 1
                 self.output_text([
-                    color, line[:start_char], reset_color,
-                    self.config.syntax_error_color, line[start_char:end_char], reset_color,
+                    color, line[:start_char], RESET_COLOR,
+                    self.config.syntax_error_color, line[start_char:end_char], RESET_COLOR,
                     color, line[end_char:]
                 ])
                 if self.config.display_arrow:
@@ -835,10 +866,10 @@ import pretty_errors
 
 
 if __name__ == "__main__":
-    configure(
-        lines_after=1, lines_before=1,
-        trace_lines_after=1, trace_lines_before=1,
-        display_locals=True,
-        postfix='\n'
-    )
+#    configure(
+#        lines_after=1, lines_before=1,
+#        trace_lines_after=1, trace_lines_before=1,
+#        display_locals=True,
+#        postfix='\n'
+#    )
     raise KeyError("Testing testing")
