@@ -1,6 +1,12 @@
+# v1.2.8
+
+* Added check for startup files left over after uninstall.
+* Added `clean` option when running module directly.
+
+
 # v1.2.7
 
-* Fixes `point_at` bug.
+* Fixed `point_at` bug.
 * Added color constants: `BLACK`, `RED`, `GREEN`, `YELLOW`, `BLUE`, `MAGENTA`, `CYAN`, `WHITE`, `BRIGHT_BLACK`, `BRIGHT_RED`, `BRIGHT_GREEN`, `BRIGHT_YELLOW`, `BRIGHT_BLUE`, `BRIGHT_MAGENTA`, `BRIGHT_CYAN`, `BRIGHT_WHITE`, `BLACK_BACKGROUND`, `RED_BACKGROUND`, `GREEN_BACKGROUND`, `YELLOW_BACKGROUND`, `BLUE_BACKGROUND`, `MAGENTA_BACKGROUND`, `CYAN_BACKGROUND`, `WHITE_BACKGROUND`
 
 

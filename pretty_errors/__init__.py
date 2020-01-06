@@ -706,7 +706,7 @@ if _active:
 
 
 
-def install(find = False, add_to_user = False, add_to_site = False, pth = False, path = None):
+def install(find = False, add_to_user = False, add_to_site = False, pth = False, path = None, clean = None):
     """Install pretty_errors so that it is imported whenever you run a python file."""
     import re, site
     check = re.compile(r'^\s*import\s+\bpretty_errors\b', re.MULTILINE)
@@ -731,8 +731,39 @@ def install(find = False, add_to_user = False, add_to_site = False, pth = False,
             print('\npretty_errors not currently installed in any expected locations.')
         return found
 
+    def clean_install():
+        pys = []
+        pths = []
+        for path in site.getsitepackages() + [site.getusersitepackages()]:
+            for filename in 'usercustomize.py', 'sitecustomize.py', 'pretty_errors.pth':
+                filepath = os.path.join(path, filename)
+                if check.search(readfile(filepath)):
+                    if filename.endswith('.pth'):
+                        pths.append(filepath)
+                    else:
+                        pys.append(filepath)
+        if not pys and not pths:
+            print('\npretty_errors not currently installed in any expected locations.')
+            return
+        if pths:
+            print('\nAttempting to remove the following files:\n')
+            for filepath in pths:
+                print(' ' + filepath)
+                try:
+                    os.remove(filepath)
+                except Exception as e:
+                    print(e)
+        if pys:
+            print('\nFound entry for pretty_errors in the following files.  ' +
+                'Please edit and remove the relevant section:\n')
+            for filepath in pys:
+                print(' ' + filepath)
+
     if find:
         find_install()
+        return
+    elif clean:
+        clean_install()
         return
 
     if add_to_user:
@@ -743,6 +774,8 @@ def install(find = False, add_to_user = False, add_to_site = False, pth = False,
         filename = 'pretty_errors.pth' if pth else 'sitecustomize.py'
     else:
 
+        found = find_install(True)
+
         def get_choice(query, choices, default = None):
             options = {}
             for i in range(len(choices)):
@@ -751,6 +784,8 @@ def install(find = False, add_to_user = False, add_to_site = False, pth = False,
                 print()
                 print(' ' + query)
                 print()
+                if found:
+                    print('\nC: Clean startup files (do so before uninstalling pretty_errors)')
                 for option, choice in enumerate(choices):
                     print('%d: %s' % ((option + 1), choice))
                 print('0: Exit')
@@ -763,17 +798,18 @@ def install(find = False, add_to_user = False, add_to_site = False, pth = False,
                     choice = str(default + 1)
                 if choice == '0':
                     sys.exit(0)
+                elif choice.lower() == 'c':
+                    clean_install()
+                    sys.exit(0)
                 elif choice in options:
                     return options[choice]
 
-        print("""\
+        print("""
 To have pretty_errors be used when you run any python file you may add it to your \
 usercustomize.py (user level) or sitecustomize.py (system level), or to pretty_errors.pth.
 
 (just hit <enter> to accept the defaults if you are unsure)
  """)
-
-        found = find_install(True)
 
         paths = site.getsitepackages() + [site.getusersitepackages()]
         path = paths[get_choice('Choose folder to install into:', paths, -1 if found else len(paths) - 1)]
@@ -795,22 +831,30 @@ usercustomize.py (user level) or sitecustomize.py (system level), or to pretty_e
 ###########################################################################
 
 # pretty-errors package to make exception reports legible.
-import pretty_errors
+try:
+    import pretty_errors
+except ImportError:
+    print(
+        'You have uninstalled pretty_errors but it is still present in your python startup.' +
+        '  Please remove its section from file:\\n ' + __file__ + '\\n'
+    )
+else:
+    pass
 
-# Use if you do not have a color terminal:
-#pretty_errors.mono()
+    # Use if you do not have a color terminal:
+    #pretty_errors.mono()
 
-# Use to hide frames whose file begins with these paths:
-#pretty_errors.blacklist('/path/to/blacklist', '/other/path/to/blacklist', ...)
+    # Use to hide frames whose file begins with these paths:
+    #pretty_errors.blacklist('/path/to/blacklist', '/other/path/to/blacklist', ...)
 
-# Use to only show frames whose file begins with these paths:
-#pretty_errors.whitelist('/path/to/whitelist', '/other/path/to/whitelist', ...)
+    # Use to only show frames whose file begins with these paths:
+    #pretty_errors.whitelist('/path/to/whitelist', '/other/path/to/whitelist', ...)
 
-# Use to selectively set a config based on the path to the code of the current frame.
-#alternate_config = pretty_errors.config.copy()
-#pretty_errors.pathed_config(alternate_config, '/use/alternate/for/this/path')
+    # Use to selectively set a config based on the path to the code of the current frame.
+    #alternate_config = pretty_errors.config.copy()
+    #pretty_errors.pathed_config(alternate_config, '/use/alternate/for/this/path')
 
-# Use to configure output:
+    # Use to configure output:
 """pretty_errors.configure(
     ''')
 
@@ -827,18 +871,19 @@ import pretty_errors
                         colors.append(option)
                     else:
                         options.append(option)
+            indent = '        '
             for option in sorted(options):
                 if option == 'filename_display':
-                    parameters.append('    ' + option.ljust(max_length) + ' = pretty_errors.FILENAME_COMPACT,  # FILENAME_EXTENDED | FILENAME_FULL')
+                    parameters.append(indent + option.ljust(max_length) + ' = pretty_errors.FILENAME_COMPACT,  # FILENAME_EXTENDED | FILENAME_FULL')
                 elif option == 'timestamp_function':
-                    parameters.append('    ' + option.ljust(max_length) + ' = time.perf_counter')
+                    parameters.append(indent + option.ljust(max_length) + ' = time.perf_counter')
                 else:
-                    parameters.append('    ' + option.ljust(max_length) + ' = ' + repr(getattr(config, option)))
+                    parameters.append(indent + option.ljust(max_length) + ' = ' + repr(getattr(config, option)))
             for option in sorted(colors):
-                parameters.append('    ' + option.ljust(max_length) + ' = ' + repr(getattr(config, option)))
+                parameters.append(indent + option.ljust(max_length) + ' = ' + repr(getattr(config, option)))
 
             output.append(',\n'.join(parameters))
-            output.append(')"""\n')
+            output.append('    )"""\n')
             output.append('###########################################################################\n')
             output = '\n'.join(output)
 
@@ -862,6 +907,8 @@ import pretty_errors
         print('\nFailed to write to:\n' + filepath)
     else:
         print('\npretty_errors added to:\n\n %s\n\nEdit it to set config options.\n' % filepath)
+        if filepath.endswith('.pth'):
+            print('\n*** Delete this file when you uninstall pretty_errors! ***\n')
 
 
 
