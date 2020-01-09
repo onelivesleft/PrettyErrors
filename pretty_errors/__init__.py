@@ -817,16 +817,16 @@ usercustomize.py (user level) or sitecustomize.py (system level), or to pretty_e
         filenames = ['usercustomize.py', 'sitecustomize.py', 'pretty_errors.pth']
         filename = filenames[get_choice('Choose file to install into:', filenames, 0)]
 
-        if filename.endswith('.pth'):
-            output = (os.path.dirname(os.path.dirname(os.path.normpath(__file__))) +
-                '\nimport pretty_errors; ' +
-                '#pretty_errors.configure()  ' +
-                '# keep on one line, for options see ' +
-                'https://github.com/onelivesleft/PrettyErrors/blob/master/README.md'
-            )
-        else:
-            output = []
-            output.append('''
+    if filename.endswith('.pth'):
+        output = (os.path.dirname(os.path.dirname(os.path.normpath(__file__))) +
+            '\nimport pretty_errors; ' +
+            '#pretty_errors.configure()  ' +
+            '# keep on one line, for options see ' +
+            'https://github.com/onelivesleft/PrettyErrors/blob/master/README.md'
+        )
+    else:
+        output = []
+        output.append('''
 
 ###########################################################################
 
@@ -858,36 +858,36 @@ else:
 """pretty_errors.configure(
     ''')
 
-            options = []
-            colors = []
-            parameters = []
-            max_length = 0
-            for option in dir(config):
-                if len(option) > max_length:
-                    max_length = len(option)
-                if (option not in ('configure', 'mono', 'copy') and
-                        not option.startswith('_')):
-                    if option.endswith('_color'):
-                        colors.append(option)
-                    else:
-                        options.append(option)
-            indent = '        '
-            for option in sorted(options):
-                if option == 'filename_display':
-                    parameters.append(indent + option.ljust(max_length) + ' = pretty_errors.FILENAME_COMPACT,  # FILENAME_EXTENDED | FILENAME_FULL')
-                elif option == 'timestamp_function':
-                    parameters.append(indent + option.ljust(max_length) + ' = time.perf_counter')
+        options = []
+        colors = []
+        parameters = []
+        max_length = 0
+        for option in dir(config):
+            if len(option) > max_length:
+                max_length = len(option)
+            if (option not in ('configure', 'mono', 'copy') and
+                    not option.startswith('_')):
+                if option.endswith('_color'):
+                    colors.append(option)
                 else:
-                    parameters.append(indent + option.ljust(max_length) + ' = ' + repr(getattr(config, option)))
-            for option in sorted(colors):
+                    options.append(option)
+        indent = '        '
+        for option in sorted(options):
+            if option == 'filename_display':
+                parameters.append(indent + option.ljust(max_length) + ' = pretty_errors.FILENAME_COMPACT,  # FILENAME_EXTENDED | FILENAME_FULL')
+            elif option == 'timestamp_function':
+                parameters.append(indent + option.ljust(max_length) + ' = time.perf_counter')
+            else:
                 parameters.append(indent + option.ljust(max_length) + ' = ' + repr(getattr(config, option)))
+        for option in sorted(colors):
+            parameters.append(indent + option.ljust(max_length) + ' = ' + repr(getattr(config, option)))
 
-            output.append(',\n'.join(parameters))
-            output.append('    )"""\n')
-            output.append('###########################################################################\n')
-            output = '\n'.join(output)
+        output.append(',\n'.join(parameters))
+        output.append('    )"""\n')
+        output.append('###########################################################################\n')
+        output = '\n'.join(output)
 
-        print('\n--------------')
+    print('\n--------------')
 
     filepath = os.path.join(path, filename)
     if check.search(readfile(filepath)):
