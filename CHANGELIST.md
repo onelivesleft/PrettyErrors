@@ -1,3 +1,10 @@
+# v1.2.9
+
+* Moved installer script entirely into `__main__`.
+* Fixed not working with `venv`.
+* Improved automatic cleaning of startup files.
+
+
 # v1.2.8
 
 * Added check for startup files left over after uninstall.
