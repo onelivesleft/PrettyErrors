@@ -1,4 +1,4 @@
-import sys, re, colorama, os, time, linecache
+import sys, re, colorama, os, time, linecache, site
 colorama.init()
 
 name = "pretty_errors"
@@ -708,7 +708,7 @@ if _active:
 
 def install(find = False, add_to_user = False, add_to_site = False, pth = False, path = None, clean = None):
     """Install pretty_errors so that it is imported whenever you run a python file."""
-    import re, site
+
     check = re.compile(r'^\s*import\s+\bpretty_errors\b', re.MULTILINE)
 
     def readfile(path):
@@ -719,7 +719,7 @@ def install(find = False, add_to_user = False, add_to_site = False, pth = False,
 
     def find_install(quiet = False):
         found = False
-        for path in site.getsitepackages() + [site.getusersitepackages()]:
+        for path in getallsitepackages():
             for filename in 'usercustomize.py', 'sitecustomize.py', 'pretty_errors.pth':
                 filepath = os.path.join(path, filename)
                 if check.search(readfile(filepath)):
@@ -734,7 +734,7 @@ def install(find = False, add_to_user = False, add_to_site = False, pth = False,
     def clean_install():
         pys = []
         pths = []
-        for path in site.getsitepackages() + [site.getusersitepackages()]:
+        for path in getallsitepackages():
             for filename in 'usercustomize.py', 'sitecustomize.py', 'pretty_errors.pth':
                 filepath = os.path.join(path, filename)
                 if check.search(readfile(filepath)):
@@ -759,6 +759,34 @@ def install(find = False, add_to_user = False, add_to_site = False, pth = False,
             for filepath in pys:
                 print(' ' + filepath)
 
+    _in_virtualenv = 'VIRTUAL_ENV' in os.environ
+    # in virtualenv, `site` has no attribute `getsitepackages` or `getusersitepackages`
+
+    if _in_virtualenv and add_to_user:
+        print('You are now in virtualenv, which has sitepackage but no user sitepackages, '
+                'thus argv `-u` is incompatible with virtualenv.')
+        print('Please use `-s` instead')
+        return
+
+    def venv_sitepackages():
+        pattern = r'^%s$' % os.path.join(os.environ['VIRTUAL_ENV'], 'lib', 'python[0-9.]+', 'site-packages')
+        sitepackages = [path for path in set(sys.path) if re.search(pattern, path)]
+        return sitepackages
+
+    def getsitepackages():
+        return venv_sitepackages() if _in_virtualenv else site.getsitepackages()
+
+    def getusersitepackages():
+        return [] if _in_virtualenv else [site.getusersitepackages()]
+
+    def getallsitepackages():
+        print('getsitepackages()')
+        print(getsitepackages())
+        print('getusersitepackages()')
+        print(getusersitepackages())
+        return getsitepackages() + getusersitepackages()
+
+
     if find:
         find_install()
         return
@@ -767,10 +795,10 @@ def install(find = False, add_to_user = False, add_to_site = False, pth = False,
         return
 
     if add_to_user:
-        path = site.getusersitepackages()
+        path = getusersitepackages()[0]
         filename = 'pretty_errors.pth' if pth else 'usercustomize.py'
     elif add_to_site:
-        path = site.getsitepackages()[0]
+        path = getsitepackages()[0]
         filename = 'pretty_errors.pth' if pth else 'sitecustomize.py'
     else:
 
@@ -811,22 +839,25 @@ usercustomize.py (user level) or sitecustomize.py (system level), or to pretty_e
 (just hit <enter> to accept the defaults if you are unsure)
  """)
 
-        paths = site.getsitepackages() + [site.getusersitepackages()]
+        paths = getallsitepackages()
         path = paths[get_choice('Choose folder to install into:', paths, -1 if found else len(paths) - 1)]
 
-        filenames = ['usercustomize.py', 'sitecustomize.py', 'pretty_errors.pth']
+        if path in getsitepackages():
+            filenames = ['sitecustomize.py', 'pretty_errors.pth']
+        else:
+            filenames = ['usercustomize.py', 'pretty_errors.pth']
         filename = filenames[get_choice('Choose file to install into:', filenames, 0)]
 
-        if filename.endswith('.pth'):
-            output = (os.path.dirname(os.path.dirname(os.path.normpath(__file__))) +
-                '\nimport pretty_errors; ' +
-                '#pretty_errors.configure()  ' +
-                '# keep on one line, for options see ' +
-                'https://github.com/onelivesleft/PrettyErrors/blob/master/README.md'
-            )
-        else:
-            output = []
-            output.append('''
+    if filename.endswith('.pth'):
+        output = (os.path.dirname(os.path.dirname(os.path.normpath(__file__))) +
+            '\nimport pretty_errors; ' +
+            '#pretty_errors.configure()  ' +
+            '# keep on one line, for options see ' +
+            'https://github.com/onelivesleft/PrettyErrors/blob/master/README.md'
+        )
+    else:
+        output = []
+        output.append('''
 
 ###########################################################################
 
@@ -858,36 +889,36 @@ else:
 """pretty_errors.configure(
     ''')
 
-            options = []
-            colors = []
-            parameters = []
-            max_length = 0
-            for option in dir(config):
-                if len(option) > max_length:
-                    max_length = len(option)
-                if (option not in ('configure', 'mono', 'copy') and
-                        not option.startswith('_')):
-                    if option.endswith('_color'):
-                        colors.append(option)
-                    else:
-                        options.append(option)
-            indent = '        '
-            for option in sorted(options):
-                if option == 'filename_display':
-                    parameters.append(indent + option.ljust(max_length) + ' = pretty_errors.FILENAME_COMPACT,  # FILENAME_EXTENDED | FILENAME_FULL')
-                elif option == 'timestamp_function':
-                    parameters.append(indent + option.ljust(max_length) + ' = time.perf_counter')
+        options = []
+        colors = []
+        parameters = []
+        max_length = 0
+        for option in dir(config):
+            if len(option) > max_length:
+                max_length = len(option)
+            if (option not in ('configure', 'mono', 'copy') and
+                    not option.startswith('_')):
+                if option.endswith('_color'):
+                    colors.append(option)
                 else:
-                    parameters.append(indent + option.ljust(max_length) + ' = ' + repr(getattr(config, option)))
-            for option in sorted(colors):
+                    options.append(option)
+        indent = '        '
+        for option in sorted(options):
+            if option == 'filename_display':
+                parameters.append(indent + option.ljust(max_length) + ' = pretty_errors.FILENAME_COMPACT,  # FILENAME_EXTENDED | FILENAME_FULL')
+            elif option == 'timestamp_function':
+                parameters.append(indent + option.ljust(max_length) + ' = time.perf_counter')
+            else:
                 parameters.append(indent + option.ljust(max_length) + ' = ' + repr(getattr(config, option)))
+        for option in sorted(colors):
+            parameters.append(indent + option.ljust(max_length) + ' = ' + repr(getattr(config, option)))
 
-            output.append(',\n'.join(parameters))
-            output.append('    )"""\n')
-            output.append('###########################################################################\n')
-            output = '\n'.join(output)
+        output.append(',\n'.join(parameters))
+        output.append('    )"""\n')
+        output.append('###########################################################################\n')
+        output = '\n'.join(output)
 
-        print('\n--------------')
+    print('\n--------------')
 
     filepath = os.path.join(path, filename)
     if check.search(readfile(filepath)):
