@@ -879,6 +879,7 @@ class StdErr():
 
 
 def replace_stderr():
+    """Replace sys.stderr, for cases where standard use with activate() does not work."""
     sys.stderr = StdErr()
 
 

@@ -212,6 +212,10 @@ else:
     # Use if you do not have a color terminal:
     #pretty_errors.mono()
 
+    # Use if you are using a framework which is handling all the exceptions before pretty_errors can:
+    #if pretty_errors.active:
+    #    pretty_errors.replace_stderr()
+
     # Use to hide frames whose file begins with these paths:
     #pretty_errors.blacklist('/path/to/blacklist', '/other/path/to/blacklist', ...)
 
