@@ -43,6 +43,16 @@ pretty_errors.blacklist('c:/python')
 
 ---
 
+##### Scraping STDERR
+
+Sometimes it will be impossible for `pretty_errors` to utilize `sys.excepthook`: for instance, if you are using a framework which installs it's own logging (such as `uvicorn`).  In such cases, you can make `pretty_errors` scrape the output to `stderr` instead, replacing it with its own.  To do so simple call:
+```python
+pretty_errors.replace_stderr()
+```
+Note that this will lose some functionality, since `pretty_errors` will only have access to what is being output on screen, rather then the entire stack trace.
+
+---
+
 ##### Whitelist / Blacklist:
 
 You may use the functions `whitelist(path)` and `blacklist(path)` to add paths which will be necessary (`whitelist`) or excluded (`blacklist`).  The top frame of the stack is never excluded.

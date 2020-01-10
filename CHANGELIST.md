@@ -1,5 +1,6 @@
 # v1.2.9
 
+* Added `replace_stderr` function to allow for situation where `pretty_errors` cannot gain access to `sys.excepthook`.
 * Moved installer script entirely into `__main__`.
 * Fixed not working with `venv`.
 * Improved automatic cleaning of startup files.

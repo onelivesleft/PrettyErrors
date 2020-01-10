@@ -1,10 +1,11 @@
 import sys, re, colorama, os, time, linecache
 colorama.init()
+output_stderr = sys.stderr
 
 name = "pretty_errors"
 
 _env_label = 'PYTHON_PRETTY_ERRORS'
-_active = _env_label not in os.environ or os.environ[_env_label] != '0'
+active = _env_label not in os.environ or os.environ[_env_label] != '0'
 
 
 FILENAME_COMPACT  = 0
@@ -392,12 +393,12 @@ class ExceptionWriter():
         count = 0
         for text in texts:
             text = str(text)
-            sys.stderr.write(text)
+            output_stderr.write(text)
             count += self.visible_length(text)
         line_length = self.get_line_length()
         if count == 0 or count % line_length != 0 or self.config.full_line_newline:
-            sys.stderr.write('\n')
-        sys.stderr.write(RESET_COLOR)
+            output_stderr.write('\n')
+        output_stderr.write(RESET_COLOR)
         if self.config.reset_stdout:
             sys.stdout.write(RESET_COLOR)
 
@@ -604,7 +605,7 @@ def excepthook(exception_type, exception_value, traceback):
     writer.write_header()
 
     if writer.config.prefix != None:
-        sys.stderr.write(writer.config.prefix)
+        output_stderr.write(writer.config.prefix)
 
     syntax_error_info = None
     if exception_type == SyntaxError:
@@ -659,7 +660,7 @@ def excepthook(exception_type, exception_value, traceback):
             check_for_pathed_config(path)
 
             if writer.config.infix != None and count != 0:
-                sys.stderr.write(writer.config.infix)
+                output_stderr.write(writer.config.infix)
 
             frame = traceback.tb_frame
             code = frame.f_code
@@ -693,7 +694,192 @@ def excepthook(exception_type, exception_value, traceback):
         writer.write_exception(exception_type, exception_value)
 
     if writer.config.postfix != None:
-        sys.stderr.write(writer.config.postfix)
+        output_stderr.write(writer.config.postfix)
+
+
+
+location_expression = re.compile(r'.*File "([^"]*)", line ([0-9]+), in (.*)')
+
+class StdErr():
+    """Replaces sys.stderr in order to scrape it, when capturing stack trace is unavailable."""
+    def __init__(self):
+        self.__in_exception = False
+        self.__awaiting_code = False
+        self.__awaiting_end = 0
+        self.__frames = []
+        self.__point_at = None
+
+
+    def __getattr__(self, name):
+        return getattr(output_stderr, name)
+
+
+    def __enter__(self, *args, **kwargs):
+        return output_stderr.__enter__(*args, **kwargs)
+
+
+    def __is_header(self, text):
+        """Is text a traceback header?"""
+        return text.startswith('Traceback (most recent call last):')
+
+
+    def __get_location(self, text):
+        """Extract location of exception.  If it returns None then text was not a location identifier."""
+        location = location_expression.match(text)
+        if location:
+            return (location.group(1), int(location.group(2)), location.group(3))
+        else:
+            return None
+
+
+    def __write_exception(self):
+        """Write exception, prettily."""
+        if not self.__frames: return
+
+        writer = exception_writer
+        writer.config = writer.default_config = config
+
+        def check_for_pathed_config(path):
+            writer.config = writer.default_config
+            for config_path in config_paths:
+                if path.startswith(config_path):
+                    writer.config = config_paths[config_path]
+                    break
+
+        path, line_number, function = self.__frames[-1]
+        check_for_pathed_config(os.path.normpath(path.lower()))
+        writer.default_config = writer.config
+
+        writer.write_header()
+
+        if writer.config.prefix != None:
+            output_stderr.write(writer.config.prefix)
+
+        exception_type = self.__exception
+        if self.__exception_args:
+            class ExceptionValue():
+                def __init__(self):
+                    self.args = []
+            exception_value = ExceptionValue()
+            if self.__exception_args.startswith('('):
+                for arg in self.__exception_args[1:-1].split(', '):
+                    exception_value.args.append(arg)
+            else:
+                exception_value.args.append(self.__exception_args)
+        else:
+            exception_value = None
+
+        syntax_error_info = None
+        if self.__exception == 'SyntaxError':
+            syntax_error_info = self.__frames[-1]
+            syntax_error_info[2] = self.__point_at
+
+        if writer.config.exception_above:
+            writer.output_text('')
+            writer.write_exception(exception_type, exception_value)
+
+        if syntax_error_info:
+            check_for_pathed_config(os.path.normpath(syntax_error_info[0]).lower())
+            writer.write_location(syntax_error_info[0], syntax_error_info[1], '')
+            writer.write_code(syntax_error_info[0], syntax_error_info[1], [], True, syntax_error_info[2])
+        else:
+            tracebacks = []
+            for i, frame in enumerate(self.__frames):
+                path, line_number, function = frame
+                path = os.path.normpath(path).lower()
+                if (i == len(self.__frames) - 1) or (writer.config.always_display_bottom and tracebacks == []):
+                    tracebacks.append(frame)
+                else:
+                    if whitelist_paths:
+                        for white in whitelist_paths:
+                            if path.startswith(white): break
+                        else:
+                            continue
+                    for black in blacklist_paths:
+                        if path.startswith(black): break
+                    else:
+                        tracebacks.append(frame)
+
+            if writer.config.top_first:
+                tracebacks.reverse()
+                if writer.config.stack_depth > 0:
+                    if writer.config.always_display_bottom and len(tracebacks) > 1:
+                        tracebacks = tracebacks[:writer.config.stack_depth] + tracebacks[-1:]
+                    else:
+                        tracebacks = tracebacks[:writer.config.stack_depth]
+                final = 0
+            else:
+                if writer.config.stack_depth > 0:
+                    if writer.config.always_display_bottom and len(tracebacks) > 1:
+                        tracebacks = tracebacks[:1] + tracebacks[-writer.config.stack_depth:]
+                    else:
+                        tracebacks = tracebacks[-writer.config.stack_depth:]
+                final = len(tracebacks) - 1
+
+            for count, traceback in enumerate(tracebacks):
+                path, line_number, function = traceback
+                normpath = os.path.normpath(path).lower()
+                check_for_pathed_config(normpath)
+
+                if writer.config.infix != None and count != 0:
+                    output_stderr.write(writer.config.infix)
+
+                writer.write_location(path, line_number, function)
+                writer.write_code(path, line_number, [], count == final)
+
+        writer.config = writer.default_config
+
+        if writer.config.exception_below:
+            writer.output_text('')
+            writer.write_exception(exception_type, exception_value)
+
+        if writer.config.postfix != None:
+            output_stderr.write(writer.config.postfix)
+
+
+    def write(self, text):
+        """Replaces sys.stderr.write, outputing pretty errors."""
+        if not self.__in_exception and not text.split():
+            output_stderr.write(text)
+        else:
+            for line in text.split('\n'):
+                if self.__awaiting_end > 0:
+                    self.__awaiting_end -= 1
+                    if self.__awaiting_end == 0:
+                        self.__exception_args = line.strip()
+                        self.__in_exception = False
+                        self.__write_exception()
+                elif self.__in_exception:
+                    if not line.strip():
+                        pass
+                    elif self.__awaiting_code:
+                        self.__awaiting_code = False
+                    else:
+                        location = self.__get_location(line)
+                        if location:
+                            self.__frames.append(location)
+                            self.__awaiting_code = True
+                        elif line.strip() == '^':
+                            self.__point_at = len(line) - 2
+                        else: # end of traceback
+                            if ': ' in line:
+                                self.__exception, self.__exception_args = line.strip().split(': ', 1)
+                                self.__in_exception = False
+                                self.__write_exception()
+                            else:
+                                self.__awaiting_end = 2
+                                self.__exception = line.strip()
+                elif self.__is_header(line):
+                    self.__in_exception = True
+                    self.__awaiting_code = False
+                    self.__frames = []
+                else:
+                    output_stderr.write(line)
+
+
+
+def replace_stderr():
+    sys.stderr = StdErr()
 
 
 def activate():
@@ -701,16 +887,16 @@ def activate():
     sys.excepthook = excepthook
 
 
-if _active:
+if active:
     activate()
 
 
 
 if __name__ == "__main__":
-#    configure(
-#        lines_after=1, lines_before=1,
-#        trace_lines_after=1, trace_lines_before=1,
-#        display_locals=True,
-#        postfix='\n'
-#    )
+    configure(
+        lines_after=1, lines_before=1,
+        trace_lines_after=1, trace_lines_before=1,
+        display_locals=True,
+        postfix='\n'
+    )
     raise KeyError("Testing testing")
