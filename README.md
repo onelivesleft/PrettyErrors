@@ -47,7 +47,7 @@ pretty_errors.blacklist('c:/python')
 
 ##### Scraping STDERR
 
-Sometimes it will be impossible for `pretty_errors` to utilize `sys.excepthook`: for instance, if you are using a framework which installs it's own logging (such as `uvicorn`).  In such cases, you can make `pretty_errors` scrape the output to `stderr` instead, replacing it with its own.  To do so simple call:
+Sometimes it will be impossible for `pretty_errors` to utilize `sys.excepthook`: for instance, if you are using a framework which installs its own logging (such as `uvicorn`).  In such cases, you can make `pretty_errors` scrape the output to `stderr` instead, replacing it with its own.  To do so simple call:
 ```python
 pretty_errors.replace_stderr()
 ```
