@@ -895,9 +895,20 @@ if active:
 
 if __name__ == "__main__":
     configure(
-        lines_after=1, lines_before=1,
-        trace_lines_after=1, trace_lines_before=1,
-        display_locals=True,
-        postfix='\n'
+        separator_character = '*',
+        filename_display    = FILENAME_EXTENDED,
+        line_number_first   = True,
+        display_link        = True,
+        lines_before        = 5,
+        lines_after         = 2,
+        line_color          = RED + '> ' + default_config.line_color,
+        code_color          =       '  ' + default_config.line_color,
+        truncate_code       = True,
+        display_locals      = True
     )
-    raise KeyError("Testing testing")
+    blacklist('c:/python')
+    foo = 100
+    if foo:
+        bar = 0
+    baz = foo / bar
+    qux = baz * 2
