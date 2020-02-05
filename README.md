@@ -13,7 +13,7 @@ This is the recommended way to use `pretty_errors`; apart from being simpler and
 
 ---
 
-![Example](https://i.imgur.com/0jpEqob.png)
+![Example](example.png)
 
 ---
 
