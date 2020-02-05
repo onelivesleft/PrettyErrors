@@ -41,6 +41,8 @@ pretty_errors.configure(
 pretty_errors.blacklist('c:/python')
 ```
 
+![Result](https://i.imgur.com/agVCL1C.png)
+
 ---
 
 ##### Scraping STDERR
