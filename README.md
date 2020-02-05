@@ -94,7 +94,7 @@ Configuration settings are stored in `pretty_errors.config`, though should be se
 Output will be wrapped at this point.  If set to `0` (which is the default) it will automatically match your console width.
 
 * `full_line_newline`<br>
-Insert a hard newline even if the line is full.  If `line_length` is the same as your console width and this is enabled then you will see double newlines where unwanted, so usually you would only set this if they are different.
+Insert a hard newline even if the line is full.  If `line_length` is the same as your console width and this is enabled then you will see double newlines when the line is exactly full, so usually you would only set this if they are different.
 
 * `separator_character`<br>
 Character used to create the header line.  Hyphen is used by default.  If set to `None` or `''` then header will be disabled.
