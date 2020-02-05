@@ -41,7 +41,7 @@ pretty_errors.configure(
 pretty_errors.blacklist('c:/python')
 ```
 
-![Result](https://i.imgur.com/agVCL1C.png)
+![Result](https://i.imgur.com/ea2adW2.png)
 
 ---
 
