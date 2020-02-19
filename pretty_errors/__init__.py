@@ -489,30 +489,38 @@ class ExceptionWriter():
             self.config.arrow_tail_color
             self.config.syntax_error_color
         """
-        if is_final:
-            target_line = self.config.lines_before
-            start = line - self.config.lines_before
-            end   = line + self.config.lines_after
-        else:
-            target_line = self.config.trace_lines_before
-            start = line - self.config.trace_lines_before
-            end   = line + self.config.trace_lines_after
-
-        if start < 1:
-            target_line -= (1 - start)
-            start = 1
 
         lines = []
-        for i in range(start, end + 1):
-            lines.append(linecache.getline(filepath, i, module_globals).rstrip())
+        if filepath == '<stdin>':
+            lines.append(line.rstrip())
+            line = target_line = start = end = 0
+        else:
+            if is_final:
+                target_line = self.config.lines_before
+                start = line - self.config.lines_before
+                end   = line + self.config.lines_after
+            else:
+                target_line = self.config.trace_lines_before
+                start = line - self.config.trace_lines_before
+                end   = line + self.config.trace_lines_after
 
-        min_lead = 9999
+            if start < 1:
+                target_line -= (1 - start)
+                start = 1
+
+            for i in range(start, end + 1):
+                lines.append(linecache.getline(filepath, i, module_globals).rstrip())
+
+        min_lead = None
         for line in lines:
             if line.strip() == '': continue
             c = 0
             while c < len(line) and line[c] in (' ', '\t'):
                 c += 1
-            if c < min_lead: min_lead = c
+            if min_lead is None or c < min_lead:
+                min_lead = c
+        if min_lead is None:
+            min_lead = 0
         if min_lead > 0:
             lines = [line[min_lead:] for line in lines]
 
@@ -619,7 +627,10 @@ def excepthook(exception_type, exception_value, traceback):
     if syntax_error_info:
         check_for_pathed_config(os.path.normpath(syntax_error_info[0]).lower())
         writer.write_location(syntax_error_info[0], syntax_error_info[1], '')
-        writer.write_code(syntax_error_info[0], syntax_error_info[1], [], True, syntax_error_info[2])
+        if(syntax_error_info[0] == '<stdin>'):
+            writer.write_code(syntax_error_info[0], syntax_error_info[3], [], True, syntax_error_info[2])
+        else:
+            writer.write_code(syntax_error_info[0], syntax_error_info[1], [], True, syntax_error_info[2])
     else:
         tracebacks = []
         while traceback != None:

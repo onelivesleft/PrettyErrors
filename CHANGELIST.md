@@ -1,3 +1,8 @@
+# v1.2.11
+
+* Fix bug when reporting SyntaxError in interactive interpreter.
+
+
 # v1.2.10
 
 * Minor fixes
