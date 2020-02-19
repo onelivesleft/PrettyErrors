@@ -13,7 +13,7 @@ This is the recommended way to use `pretty_errors`; apart from being simpler and
 
 ---
 
-![Example](https://github.com/onelivesleft/PrettyErrors/blob/master/example.png)
+![Example](https://raw.githubusercontent.com/onelivesleft/PrettyErrors/master/example.png)
 
 ---
 
@@ -41,7 +41,7 @@ pretty_errors.configure(
 pretty_errors.blacklist('c:/python')
 ```
 
-![Result](https://github.com/onelivesleft/PrettyErrors/blob/master/example2.png)
+![Result](https://raw.githubusercontent.com/onelivesleft/PrettyErrors/master/example2.png)
 
 ---
 
