@@ -1,3 +1,8 @@
+# v1.2.12
+
+* Fix README image URLs
+
+
 # v1.2.11
 
 * Fix bug when reporting SyntaxError in interactive interpreter.
