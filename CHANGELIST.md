@@ -1,3 +1,8 @@
+# v1.2.14
+
+* Fix bug when used in interactive interpreter.
+
+
 # v1.2.13
 
 * No, really, fix the README URLs

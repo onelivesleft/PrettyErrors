@@ -490,6 +490,7 @@ class ExceptionWriter():
             self.config.syntax_error_color
         """
 
+        line = str(line)
         lines = []
         if filepath == '<stdin>':
             lines.append(line.rstrip())
