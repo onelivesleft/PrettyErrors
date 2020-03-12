@@ -1,3 +1,8 @@
+# v1.2.15
+
+* Really fix bug when used in interactive interpreter.
+
+
 # v1.2.14
 
 * Fix bug when used in interactive interpreter.
