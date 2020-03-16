@@ -1,3 +1,9 @@
+# v1.2.16
+
+* Added support for when exceptions are thrown within exceptions.
+* Added `inner_exception_message` and `inner_exception_separator` config options.
+
+
 # v1.2.15
 
 * Really fix bug when used in interactive interpreter.

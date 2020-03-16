@@ -153,6 +153,18 @@ When enabled an arrow will be displayed for syntax errors, pointing at the offen
 * `arrow_head_character`, `arrow_tail_character`<br>
 Characters used to draw the arrow which points at syntax errors.
 
+* `inner_exception_message`<br>
+Message displayed when one exception occurs inside another, between the two exceptions.  Default is `None`, which will simply display the exceptions separated by the header.  If you want to emulate the default non-pretty behaviour, use this:
+
+`inner_exception_message = pretty_errors.MAGENTA + "\n  During handling of the above exception, another exception occurred:\n"`
+
+Note that if you use `top_first` then the order will be reversed, so you should use a message like this instead:
+
+`inner_exception_message = pretty_errors.MAGENTA + "\n  The above exception occurred during another exception:\n"`
+
+* `inner_exception_separator`<br>
+Default is `False`.  When set to `True` a header will be written before the `inner_exception_message`.
+
 * `prefix`<br>
 Text string which is displayed at the top of the report, just below the header.
 

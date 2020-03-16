@@ -51,98 +51,102 @@ config_paths = {}
 class PrettyErrorsConfig():
     def __init__(self, instance = None):
         if instance is None:
-            self.line_length            = 0
-            self.full_line_newline      = False
-            self.filename_display       = FILENAME_COMPACT
-            self.display_timestamp      = False
+            self.line_length               = 0
+            self.full_line_newline         = False
+            self.filename_display          = FILENAME_COMPACT
+            self.display_timestamp         = False
             try:
-                self.timestamp_function = time.perf_counter
+                self.timestamp_function    = time.perf_counter
             except AttributeError:
-                self.timestamp_function = time.time
-            self.display_link           = False
-            self.separator_character    = '-'
-            self.line_number_first      = False
-            self.top_first              = False
-            self.always_display_bottom  = True
-            self.stack_depth            = 0
-            self.exception_above        = False
-            self.exception_below        = True
-            self.trace_lines_before     = 0
-            self.trace_lines_after      = 0
-            self.lines_before           = 0
-            self.lines_after            = 0
-            self.display_locals         = False
-            self.display_trace_locals   = False
-            self.truncate_locals        = True
-            self.truncate_code          = False
-            self.display_arrow          = True
-            self.arrow_tail_character   = '-'
-            self.arrow_head_character   = '^'
-            self.header_color           = GREY
-            self.timestamp_color        = GREY
-            self.line_color             = BRIGHT_WHITE
-            self.code_color             = GREY
-            self.filename_color         = BRIGHT_CYAN
-            self.line_number_color      = BRIGHT_GREEN
-            self.function_color         = BRIGHT_BLUE
-            self.link_color             = GREY
-            self.local_name_color       = BRIGHT_MAGENTA
-            self.local_value_color      = RESET_COLOR
-            self.local_len_color        = GREY
-            self.exception_color        = BRIGHT_RED
-            self.exception_arg_color    = BRIGHT_YELLOW
-            self.syntax_error_color     = BRIGHT_GREEN
-            self.arrow_tail_color       = BRIGHT_GREEN
-            self.arrow_head_color       = BRIGHT_GREEN
-            self.prefix                 = None
-            self.infix                  = None
-            self.postfix                = None
-            self.reset_stdout           = False
+                self.timestamp_function    = time.time
+            self.display_link              = False
+            self.separator_character       = '-'
+            self.line_number_first         = False
+            self.top_first                 = False
+            self.always_display_bottom     = True
+            self.stack_depth               = 0
+            self.exception_above           = False
+            self.exception_below           = True
+            self.trace_lines_before        = 0
+            self.trace_lines_after         = 0
+            self.lines_before              = 0
+            self.lines_after               = 0
+            self.display_locals            = False
+            self.display_trace_locals      = False
+            self.truncate_locals           = True
+            self.truncate_code             = False
+            self.display_arrow             = True
+            self.arrow_tail_character      = '-'
+            self.arrow_head_character      = '^'
+            self.header_color              = GREY
+            self.timestamp_color           = GREY
+            self.line_color                = BRIGHT_WHITE
+            self.code_color                = GREY
+            self.filename_color            = BRIGHT_CYAN
+            self.line_number_color         = BRIGHT_GREEN
+            self.function_color            = BRIGHT_BLUE
+            self.link_color                = GREY
+            self.local_name_color          = BRIGHT_MAGENTA
+            self.local_value_color         = RESET_COLOR
+            self.local_len_color           = GREY
+            self.exception_color           = BRIGHT_RED
+            self.exception_arg_color       = BRIGHT_YELLOW
+            self.syntax_error_color        = BRIGHT_GREEN
+            self.arrow_tail_color          = BRIGHT_GREEN
+            self.arrow_head_color          = BRIGHT_GREEN
+            self.inner_exception_message   = None
+            self.inner_exception_separator = False
+            self.prefix                    = None
+            self.infix                     = None
+            self.postfix                   = None
+            self.reset_stdout              = False
         else:
-            self.line_length            = instance.line_length
-            self.full_line_newline      = instance.full_line_newline
-            self.filename_display       = instance.filename_display
-            self.display_timestamp      = instance.display_timestamp
-            self.timestamp_function     = instance.timestamp_function
-            self.display_link           = instance.display_link
-            self.separator_character    = instance.separator_character
-            self.line_number_first      = instance.line_number_first
-            self.top_first              = instance.top_first
-            self.always_display_bottom  = instance.always_display_bottom
-            self.stack_depth            = instance.stack_depth
-            self.exception_above        = instance.exception_above
-            self.exception_below        = instance.exception_below
-            self.trace_lines_before     = instance.trace_lines_before
-            self.trace_lines_after      = instance.trace_lines_after
-            self.lines_before           = instance.lines_before
-            self.lines_after            = instance.lines_after
-            self.display_locals         = instance.display_locals
-            self.display_trace_locals   = instance.display_trace_locals
-            self.truncate_locals        = instance.truncate_locals
-            self.truncate_code          = instance.truncate_code
-            self.display_arrow          = instance.display_arrow
-            self.arrow_tail_character   = instance.arrow_tail_character
-            self.arrow_head_character   = instance.arrow_head_character
-            self.header_color           = instance.header_color
-            self.timestamp_color        = instance.timestamp_color
-            self.line_color             = instance.line_color
-            self.code_color             = instance.code_color
-            self.filename_color         = instance.filename_color
-            self.line_number_color      = instance.line_number_color
-            self.function_color         = instance.function_color
-            self.link_color             = instance.link_color
-            self.local_name_color       = instance.local_name_color
-            self.local_value_color      = instance.local_value_color
-            self.local_len_color        = instance.local_len_color
-            self.exception_color        = instance.exception_color
-            self.exception_arg_color    = instance.exception_arg_color
-            self.syntax_error_color     = instance.syntax_error_color
-            self.arrow_tail_color       = instance.arrow_tail_color
-            self.arrow_head_color       = instance.arrow_head_color
-            self.prefix                 = instance.prefix
-            self.infix                  = instance.infix
-            self.postfix                = instance.postfix
-            self.reset_stdout           = instance.reset_stdout
+            self.line_length               = instance.line_length
+            self.full_line_newline         = instance.full_line_newline
+            self.filename_display          = instance.filename_display
+            self.display_timestamp         = instance.display_timestamp
+            self.timestamp_function        = instance.timestamp_function
+            self.display_link              = instance.display_link
+            self.separator_character       = instance.separator_character
+            self.line_number_first         = instance.line_number_first
+            self.top_first                 = instance.top_first
+            self.always_display_bottom     = instance.always_display_bottom
+            self.stack_depth               = instance.stack_depth
+            self.exception_above           = instance.exception_above
+            self.exception_below           = instance.exception_below
+            self.trace_lines_before        = instance.trace_lines_before
+            self.trace_lines_after         = instance.trace_lines_after
+            self.lines_before              = instance.lines_before
+            self.lines_after               = instance.lines_after
+            self.display_locals            = instance.display_locals
+            self.display_trace_locals      = instance.display_trace_locals
+            self.truncate_locals           = instance.truncate_locals
+            self.truncate_code             = instance.truncate_code
+            self.display_arrow             = instance.display_arrow
+            self.arrow_tail_character      = instance.arrow_tail_character
+            self.arrow_head_character      = instance.arrow_head_character
+            self.header_color              = instance.header_color
+            self.timestamp_color           = instance.timestamp_color
+            self.line_color                = instance.line_color
+            self.code_color                = instance.code_color
+            self.filename_color            = instance.filename_color
+            self.line_number_color         = instance.line_number_color
+            self.function_color            = instance.function_color
+            self.link_color                = instance.link_color
+            self.local_name_color          = instance.local_name_color
+            self.local_value_color         = instance.local_value_color
+            self.local_len_color           = instance.local_len_color
+            self.exception_color           = instance.exception_color
+            self.exception_arg_color       = instance.exception_arg_color
+            self.syntax_error_color        = instance.syntax_error_color
+            self.arrow_tail_color          = instance.arrow_tail_color
+            self.arrow_head_color          = instance.arrow_head_color
+            self.inner_exception_message   = instance.inner_exception_message
+            self.inner_exception_separator = instance.inner_exception_separator
+            self.prefix                    = instance.prefix
+            self.infix                     = instance.infix
+            self.postfix                   = instance.postfix
+            self.reset_stdout              = instance.reset_stdout
 
 
     def configure(self, **kwargs):
@@ -153,50 +157,52 @@ class PrettyErrorsConfig():
 
     def copy(self):
         c = PrettyErrorsConfig()
-        c.line_length            = self.line_length
-        c.full_line_newline      = self.full_line_newline
-        c.filename_display       = self.filename_display
-        c.display_timestamp      = self.display_timestamp
-        c.timestamp_function     = self.timestamp_function
-        c.display_link           = self.display_link
-        c.separator_character    = self.separator_character
-        c.line_number_first      = self.line_number_first
-        c.top_first              = self.top_first
-        c.always_display_bottom  = self.always_display_bottom
-        c.stack_depth            = self.stack_depth
-        c.exception_above        = self.exception_above
-        c.exception_below        = self.exception_below
-        c.trace_lines_before     = self.trace_lines_before
-        c.trace_lines_after      = self.trace_lines_after
-        c.lines_before           = self.lines_before
-        c.lines_after            = self.lines_after
-        c.display_locals         = self.display_locals
-        c.display_trace_locals   = self.display_trace_locals
-        c.truncate_locals        = self.truncate_locals
-        c.truncate_code          = self.truncate_code
-        c.display_arrow          = self.display_arrow
-        c.arrow_tail_character   = self.arrow_tail_character
-        c.arrow_head_character   = self.arrow_head_character
-        c.header_color           = self.header_color
-        c.timestamp_color        = self.timestamp_color
-        c.line_color             = self.line_color
-        c.code_color             = self.code_color
-        c.filename_color         = self.filename_color
-        c.line_number_color      = self.line_number_color
-        c.function_color         = self.function_color
-        c.link_color             = self.link_color
-        c.local_name_color       = self.local_name_color
-        c.local_value_color      = self.local_value_color
-        c.local_len_color        = self.local_len_color
-        c.exception_color        = self.exception_color
-        c.exception_arg_color    = self.exception_arg_color
-        c.syntax_error_color     = self.syntax_error_color
-        c.arrow_tail_color       = self.arrow_tail_color
-        c.arrow_head_color       = self.arrow_head_color
-        c.prefix                 = self.prefix
-        c.infix                  = self.infix
-        c.postfix                = self.postfix
-        c.reset_stdout           = self.reset_stdout
+        c.line_length               = self.line_length
+        c.full_line_newline         = self.full_line_newline
+        c.filename_display          = self.filename_display
+        c.display_timestamp         = self.display_timestamp
+        c.timestamp_function        = self.timestamp_function
+        c.display_link              = self.display_link
+        c.separator_character       = self.separator_character
+        c.line_number_first         = self.line_number_first
+        c.top_first                 = self.top_first
+        c.always_display_bottom     = self.always_display_bottom
+        c.stack_depth               = self.stack_depth
+        c.exception_above           = self.exception_above
+        c.exception_below           = self.exception_below
+        c.trace_lines_before        = self.trace_lines_before
+        c.trace_lines_after         = self.trace_lines_after
+        c.lines_before              = self.lines_before
+        c.lines_after               = self.lines_after
+        c.display_locals            = self.display_locals
+        c.display_trace_locals      = self.display_trace_locals
+        c.truncate_locals           = self.truncate_locals
+        c.truncate_code             = self.truncate_code
+        c.display_arrow             = self.display_arrow
+        c.arrow_tail_character      = self.arrow_tail_character
+        c.arrow_head_character      = self.arrow_head_character
+        c.header_color              = self.header_color
+        c.timestamp_color           = self.timestamp_color
+        c.line_color                = self.line_color
+        c.code_color                = self.code_color
+        c.filename_color            = self.filename_color
+        c.line_number_color         = self.line_number_color
+        c.function_color            = self.function_color
+        c.link_color                = self.link_color
+        c.local_name_color          = self.local_name_color
+        c.local_value_color         = self.local_value_color
+        c.local_len_color           = self.local_len_color
+        c.exception_color           = self.exception_color
+        c.exception_arg_color       = self.exception_arg_color
+        c.syntax_error_color        = self.syntax_error_color
+        c.arrow_tail_color          = self.arrow_tail_color
+        c.arrow_head_color          = self.arrow_head_color
+        c.inner_exception_message   = self.inner_exception_message
+        c.inner_exception_separator = self.inner_exception_separator
+        c.prefix                    = self.prefix
+        c.infix                     = self.infix
+        c.postfix                   = self.postfix
+        c.reset_stdout              = self.reset_stdout
         return c
 
     __copy__ = copy
@@ -207,97 +213,101 @@ default_config = PrettyErrorsConfig()
 
 
 def configure(
-        always_display_bottom = None,
-        arrow_head_character  = None,
-        arrow_tail_character  = None,
-        arrow_head_color      = None,
-        arrow_tail_color      = None,
-        code_color            = None,
-        display_arrow         = None,
-        display_link          = None,
-        display_locals        = None,
-        display_timestamp     = None,
-        display_trace_locals  = None,
-        exception_above       = None,
-        exception_arg_color   = None,
-        exception_below       = None,
-        exception_color       = None,
-        filename_color        = None,
-        filename_display      = None,
-        full_line_newline     = None,
-        function_color        = None,
-        header_color          = None,
-        infix                 = None,
-        line_color            = None,
-        line_length           = None,
-        line_number_color     = None,
-        line_number_first     = None,
-        lines_after           = None,
-        lines_before          = None,
-        link_color            = None,
-        local_len_color       = None,
-        local_name_color      = None,
-        local_value_color     = None,
-        postfix               = None,
-        prefix                = None,
-        reset_stdout          = None,
-        separator_character   = None,
-        stack_depth           = None,
-        syntax_error_color    = None,
-        timestamp_color       = None,
-        timestamp_function    = None,
-        top_first             = None,
-        trace_lines_after     = None,
-        trace_lines_before    = None,
-        truncate_code         = None,
-        truncate_locals       = None
+        always_display_bottom     = None,
+        arrow_head_character      = None,
+        arrow_tail_character      = None,
+        arrow_head_color          = None,
+        arrow_tail_color          = None,
+        code_color                = None,
+        display_arrow             = None,
+        display_link              = None,
+        display_locals            = None,
+        display_timestamp         = None,
+        display_trace_locals      = None,
+        exception_above           = None,
+        exception_arg_color       = None,
+        exception_below           = None,
+        exception_color           = None,
+        filename_color            = None,
+        filename_display          = None,
+        full_line_newline         = None,
+        function_color            = None,
+        header_color              = None,
+        infix                     = None,
+        inner_exception_message   = None,
+        inner_exception_separator = None,
+        line_color                = None,
+        line_length               = None,
+        line_number_color         = None,
+        line_number_first         = None,
+        lines_after               = None,
+        lines_before              = None,
+        link_color                = None,
+        local_len_color           = None,
+        local_name_color          = None,
+        local_value_color         = None,
+        postfix                   = None,
+        prefix                    = None,
+        reset_stdout              = None,
+        separator_character       = None,
+        stack_depth               = None,
+        syntax_error_color        = None,
+        timestamp_color           = None,
+        timestamp_function        = None,
+        top_first                 = None,
+        trace_lines_after         = None,
+        trace_lines_before        = None,
+        truncate_code             = None,
+        truncate_locals           = None
         ):
     """Configure settings governing how exceptions are displayed."""
     config.configure(
-        always_display_bottom = always_display_bottom,
-        arrow_head_character  = arrow_head_character,
-        arrow_tail_character  = arrow_tail_character,
-        arrow_head_color      = arrow_head_color,
-        arrow_tail_color      = arrow_tail_color,
-        code_color            = code_color,
-        display_arrow         = display_arrow,
-        display_link          = display_link,
-        display_locals        = display_locals,
-        display_timestamp     = display_timestamp,
-        display_trace_locals  = display_trace_locals,
-        exception_above       = exception_above,
-        exception_arg_color   = exception_arg_color,
-        exception_below       = exception_below,
-        exception_color       = exception_color,
-        filename_color        = filename_color,
-        filename_display      = filename_display,
-        full_line_newline     = full_line_newline,
-        function_color        = function_color,
-        header_color          = header_color,
-        infix                 = infix,
-        line_color            = line_color,
-        line_length           = line_length,
-        line_number_color     = line_number_color,
-        line_number_first     = line_number_first,
-        lines_after           = lines_after,
-        lines_before          = lines_before,
-        link_color            = link_color,
-        local_len_color       = local_len_color,
-        local_name_color      = local_name_color,
-        local_value_color     = local_value_color,
-        postfix               = postfix,
-        prefix                = prefix,
-        reset_stdout          = reset_stdout,
-        separator_character   = separator_character,
-        stack_depth           = stack_depth,
-        syntax_error_color    = syntax_error_color,
-        timestamp_color       = timestamp_color,
-        timestamp_function    = timestamp_function,
-        top_first             = top_first,
-        trace_lines_after     = trace_lines_after,
-        trace_lines_before    = trace_lines_before,
-        truncate_code         = truncate_code,
-        truncate_locals       = truncate_locals
+        always_display_bottom     = always_display_bottom,
+        arrow_head_character      = arrow_head_character,
+        arrow_tail_character      = arrow_tail_character,
+        arrow_head_color          = arrow_head_color,
+        arrow_tail_color          = arrow_tail_color,
+        code_color                = code_color,
+        display_arrow             = display_arrow,
+        display_link              = display_link,
+        display_locals            = display_locals,
+        display_timestamp         = display_timestamp,
+        display_trace_locals      = display_trace_locals,
+        exception_above           = exception_above,
+        exception_arg_color       = exception_arg_color,
+        exception_below           = exception_below,
+        exception_color           = exception_color,
+        filename_color            = filename_color,
+        filename_display          = filename_display,
+        full_line_newline         = full_line_newline,
+        function_color            = function_color,
+        header_color              = header_color,
+        infix                     = infix,
+        inner_exception_message   = inner_exception_message,
+        inner_exception_separator = inner_exception_separator,
+        line_color                = line_color,
+        line_length               = line_length,
+        line_number_color         = line_number_color,
+        line_number_first         = line_number_first,
+        lines_after               = lines_after,
+        lines_before              = lines_before,
+        link_color                = link_color,
+        local_len_color           = local_len_color,
+        local_name_color          = local_name_color,
+        local_value_color         = local_value_color,
+        postfix                   = postfix,
+        prefix                    = prefix,
+        reset_stdout              = reset_stdout,
+        separator_character       = separator_character,
+        stack_depth               = stack_depth,
+        syntax_error_color        = syntax_error_color,
+        timestamp_color           = timestamp_color,
+        timestamp_function        = timestamp_function,
+        top_first                 = top_first,
+        trace_lines_after         = trace_lines_after,
+        trace_lines_before        = trace_lines_before,
+        truncate_code             = truncate_code,
+        truncate_locals           = truncate_locals
     )
 
 
@@ -596,6 +606,14 @@ def excepthook(exception_type, exception_value, traceback):
     writer = exception_writer
     writer.config = writer.default_config = config
 
+    if exception_value.__context__ and not writer.config.top_first:
+        excepthook(type(exception_value.__context__), exception_value.__context__, exception_value.__context__.__traceback__)
+        writer.config = writer.default_config
+        if writer.config.inner_exception_message != None:
+            if writer.config.inner_exception_separator:
+                writer.write_header()
+            output_stderr.write(writer.config.inner_exception_message)
+
     def check_for_pathed_config(path):
         writer.config = writer.default_config
         for config_path in config_paths:
@@ -707,6 +725,13 @@ def excepthook(exception_type, exception_value, traceback):
     if writer.config.postfix != None:
         output_stderr.write(writer.config.postfix)
 
+    if exception_value.__context__ and writer.config.top_first:
+        if writer.config.inner_exception_message != None:
+            if writer.config.inner_exception_separator:
+                writer.write_header()
+            output_stderr.write(writer.config.inner_exception_message)
+        excepthook(type(exception_value.__context__), exception_value.__context__, exception_value.__context__.__traceback__)
+
 
 
 location_expression = re.compile(r'.*File "([^"]*)", line ([0-9]+), in (.*)')
@@ -732,6 +757,11 @@ class StdErr():
     def __is_header(self, text):
         """Is text a traceback header?"""
         return text.startswith('Traceback (most recent call last):')
+
+
+    def __is_outer_exception(self, text):
+        """Is text a notification for an outer exception?"""
+        return text.startswith('During handling of the above exception, another exception occurred:')
 
 
     def __get_location(self, text):
@@ -884,6 +914,11 @@ class StdErr():
                     self.__in_exception = True
                     self.__awaiting_code = False
                     self.__frames = []
+                elif self.__is_outer_exception(line):
+                    if config.inner_exception_message != None:
+                        if config.inner_exception_separator:
+                            exception_writer.write_header()
+                        output_stderr.write(config.inner_exception_message)
                 else:
                     output_stderr.write(line)
 
@@ -906,7 +941,6 @@ if active:
 
 if __name__ == "__main__":
     configure(
-        separator_character = '*',
         filename_display    = FILENAME_EXTENDED,
         line_number_first   = True,
         display_link        = True,
@@ -915,11 +949,14 @@ if __name__ == "__main__":
         line_color          = RED + '> ' + default_config.line_color,
         code_color          =       '  ' + default_config.line_color,
         truncate_code       = True,
+        inner_exception_separator=True,
+        inner_exception_message = MAGENTA + "\n  During handling of the above exception, another exception occurred:\n",
         display_locals      = True
     )
     blacklist('c:/python')
-    foo = 100
-    if foo:
-        bar = 0
-    baz = foo / bar
-    qux = baz * 2
+    try:
+        myval = [1,2]
+        print(myval[3])
+    except:
+        print("First exception")
+        raise OSError
