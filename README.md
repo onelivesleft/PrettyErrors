@@ -120,6 +120,9 @@ When enabled the stack trace will be reversed, displaying the top of the stack f
 * `always_display_bottom`<br>
 When enabled (which is the default) the bottom frame of the stack trace will always be displayed.
 
+* `show_suppressed`<br>
+When enabled all suppressed exceptions in the stack trace will be shown (typically they are suppressed because an exception above them has replaced them).  The normal python behaviour is to hide them.
+
 * `filename_display`<br>
 How the filename is displayed: may be `pretty_errors.FILENAME_COMPACT`, `pretty_errors.FILENAME_EXTENDED`, or `pretty_errors.FILENAME_FULL`
 
