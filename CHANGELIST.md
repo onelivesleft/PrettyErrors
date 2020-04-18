@@ -1,3 +1,9 @@
+# v1.2.17
+
+* Suppressed exceptions no longer displayed (i.e. respects `suppress_context` flag)
+* Added `show_suppressed` config option to override this behaviour.
+
+
 # v1.2.16
 
 * Added support for when exceptions are thrown within exceptions.

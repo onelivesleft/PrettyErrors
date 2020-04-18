@@ -100,6 +100,7 @@ class PrettyErrorsConfig():
             self.infix                     = None
             self.postfix                   = None
             self.reset_stdout              = False
+            self.show_suppressed           = False
         else:
             self.line_length               = instance.line_length
             self.full_line_newline         = instance.full_line_newline
@@ -147,6 +148,7 @@ class PrettyErrorsConfig():
             self.infix                     = instance.infix
             self.postfix                   = instance.postfix
             self.reset_stdout              = instance.reset_stdout
+            self.show_suppressed           = instance.show_suppressed
 
 
     def configure(self, **kwargs):
@@ -203,6 +205,7 @@ class PrettyErrorsConfig():
         c.infix                     = self.infix
         c.postfix                   = self.postfix
         c.reset_stdout              = self.reset_stdout
+        c.show_suppressed           = self.show_suppressed
         return c
 
     __copy__ = copy
@@ -250,6 +253,7 @@ def configure(
         prefix                    = None,
         reset_stdout              = None,
         separator_character       = None,
+        show_suppressed           = None,
         stack_depth               = None,
         syntax_error_color        = None,
         timestamp_color           = None,
@@ -299,6 +303,7 @@ def configure(
         prefix                    = prefix,
         reset_stdout              = reset_stdout,
         separator_character       = separator_character,
+        show_suppressed           = show_suppressed,
         stack_depth               = stack_depth,
         syntax_error_color        = syntax_error_color,
         timestamp_color           = timestamp_color,
@@ -606,7 +611,9 @@ def excepthook(exception_type, exception_value, traceback):
     writer = exception_writer
     writer.config = writer.default_config = config
 
-    if exception_value.__context__ and not writer.config.top_first:
+
+    if (not writer.config.top_first and exception_value.__context__
+            and (not exception_value.__suppress_context__ or config.show_suppressed)):
         excepthook(type(exception_value.__context__), exception_value.__context__, exception_value.__context__.__traceback__)
         writer.config = writer.default_config
         if writer.config.inner_exception_message != None:
@@ -725,7 +732,8 @@ def excepthook(exception_type, exception_value, traceback):
     if writer.config.postfix != None:
         output_stderr.write(writer.config.postfix)
 
-    if exception_value.__context__ and writer.config.top_first:
+    if (writer.config.top_first and exception_value.__context__ and
+        (not exception_value.__suppress_context__ or config.show_suppressed)):
         if writer.config.inner_exception_message != None:
             if writer.config.inner_exception_separator:
                 writer.write_header()
