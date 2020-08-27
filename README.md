@@ -196,6 +196,9 @@ Escape sequence to set exception color.
 * `exception_arg_color`<br>
 Escape sequence to set exception arguments color.
 
+* `exception_file_color`<br>
+Escape sequence to set color of filenames in exceptions (for example, in a FileNotFoundError).
+
 * `filename_color`<br>
 Escape sequence to set filename color.
 

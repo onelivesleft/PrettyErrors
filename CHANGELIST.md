@@ -1,3 +1,9 @@
+# v1.2.18
+
+* Now outputs `filename` and `filename2` attributes of exceptions (e.g. in `FileNotFoundError`)
+* Added `exception_file_color` config option to color them.
+
+
 # v1.2.17
 
 * Suppressed exceptions no longer displayed (i.e. respects `suppress_context` flag)

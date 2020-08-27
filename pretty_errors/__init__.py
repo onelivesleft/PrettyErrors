@@ -91,6 +91,7 @@ class PrettyErrorsConfig():
             self.local_len_color           = GREY
             self.exception_color           = BRIGHT_RED
             self.exception_arg_color       = BRIGHT_YELLOW
+            self.exception_file_color      = BRIGHT_MAGENTA
             self.syntax_error_color        = BRIGHT_GREEN
             self.arrow_tail_color          = BRIGHT_GREEN
             self.arrow_head_color          = BRIGHT_GREEN
@@ -139,6 +140,7 @@ class PrettyErrorsConfig():
             self.local_len_color           = instance.local_len_color
             self.exception_color           = instance.exception_color
             self.exception_arg_color       = instance.exception_arg_color
+            self.exception_file_color      = instance.exception_file_color
             self.syntax_error_color        = instance.syntax_error_color
             self.arrow_tail_color          = instance.arrow_tail_color
             self.arrow_head_color          = instance.arrow_head_color
@@ -196,6 +198,7 @@ class PrettyErrorsConfig():
         c.local_len_color           = self.local_len_color
         c.exception_color           = self.exception_color
         c.exception_arg_color       = self.exception_arg_color
+        c.exception_file_color       = self.exception_file_color
         c.syntax_error_color        = self.syntax_error_color
         c.arrow_tail_color          = self.arrow_tail_color
         c.arrow_head_color          = self.arrow_head_color
@@ -231,6 +234,7 @@ def configure(
         exception_arg_color       = None,
         exception_below           = None,
         exception_color           = None,
+        exception_file_color      = None,
         filename_color            = None,
         filename_display          = None,
         full_line_newline         = None,
@@ -281,6 +285,7 @@ def configure(
         exception_arg_color       = exception_arg_color,
         exception_below           = exception_below,
         exception_color           = exception_color,
+        exception_file_color      = exception_file_color,
         filename_color            = filename_color,
         filename_display          = filename_display,
         full_line_newline         = full_line_newline,
@@ -320,24 +325,25 @@ def mono():
     global RESET_COLOR
     RESET_COLOR = ''
     configure(
-        infix               = '\n---\n',
-        line_number_first   = True,
-        code_color          = '| ',
-        exception_arg_color = '',
-        exception_color     = '',
-        filename_color      = '',
-        function_color      = '',
-        header_color        = '',
-        line_color          = '> ',
-        line_number_color   = '',
-        link_color          = '',
-        local_len_color     = '',
-        local_name_color    = '= ',
-        local_value_color   = '',
-        timestamp_color     = '',
-        arrow_head_color    = '',
-        arrow_tail_color    = '',
-        syntax_error_color  = ''
+        infix                = '\n---\n',
+        line_number_first    = True,
+        code_color           = '| ',
+        exception_arg_color  = '',
+        exception_color      = '',
+        exception_file_color = '',
+        filename_color       = '',
+        function_color       = '',
+        header_color         = '',
+        line_color           = '> ',
+        line_number_color    = '',
+        link_color           = '',
+        local_len_color      = '',
+        local_name_color     = '= ',
+        local_value_color    = '',
+        timestamp_color      = '',
+        arrow_head_color     = '',
+        arrow_tail_color     = '',
+        syntax_error_color   = ''
     )
 
 
@@ -593,12 +599,23 @@ class ExceptionWriter():
             self.config.exception_arg_color
         """
         if exception_value and len(exception_value.args) > 0:
-            self.output_text([
+            output = [
                 self.config.exception_color, self.exception_name(exception_type), ':\n',
                 self.config.exception_arg_color, '\n'.join((str(x) for x in exception_value.args))
-            ])
+            ]
         else:
-            self.output_text([self.config.exception_color, self.exception_name(exception_type)])
+            output = [self.config.exception_color, self.exception_name(exception_type)]
+
+        for attr in ("filename", "filename2"):
+            if hasattr(exception_value, attr):
+                path = getattr(exception_value, attr)
+                if path is not None:
+                    output.append('\n')
+                    output.append(self.config.exception_file_color)
+                    output.append(path)
+
+        self.output_text(output)
+
 
 
 exception_writer = ExceptionWriter()
