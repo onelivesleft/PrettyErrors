@@ -227,7 +227,8 @@ else:
     #pretty_errors.pathed_config(alternate_config, '/use/alternate/for/this/path')
 
     # Use to configure output:
-    """pretty_errors.configure(
+    """import time
+    pretty_errors.configure(
     ''')
 
         options = []
