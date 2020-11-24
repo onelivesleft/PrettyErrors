@@ -199,6 +199,8 @@ To have pretty_errors be used when you run any python file you may add it to you
 ### BEGIN PRETTY ERRORS
 
 # pretty-errors package to make exception reports legible.
+# v%s generated this config: newer version may have added methods/options not present!
+
 try:
     import pretty_errors
 except ImportError:
@@ -226,9 +228,9 @@ else:
     #alternate_config = pretty_errors.config.copy()
     #pretty_errors.pathed_config(alternate_config, '/use/alternate/for/this/path')
 
-    # Use to configure output:
+    # Use to configure output:  Uncomment each line to change that setting.
     """pretty_errors.configure(
-    ''')
+    ''' % pretty_errors.__version__)
 
         options = []
         colors = []
@@ -241,21 +243,23 @@ else:
                     not option.startswith('_')):
                 if option.endswith('_color'):
                     colors.append(option)
-                else:
+                elif option != 'name':
                     options.append(option)
         indent = '        '
+        def prefix(s):
+            return indent + '#' + s.ljust(max_length) + ' = '
         for option in sorted(options):
             if option == 'filename_display':
-                parameters.append(indent + option.ljust(max_length) + ' = pretty_errors.FILENAME_COMPACT,  # FILENAME_EXTENDED | FILENAME_FULL')
+                parameters.append(prefix(option) + 'pretty_errors.FILENAME_COMPACT,  # FILENAME_EXTENDED | FILENAME_FULL')
             elif option == 'timestamp_function':
-                parameters.append(indent + option.ljust(max_length) + ' = time.perf_counter')
+                parameters.append(prefix(option) + 'time.perf_counter')
             else:
-                parameters.append(indent + option.ljust(max_length) + ' = ' + repr(getattr(pretty_errors.config, option)))
+                parameters.append(prefix(option) + repr(getattr(pretty_errors.config, option)))
         for option in sorted(colors):
-            parameters.append(indent + option.ljust(max_length) + ' = ' + repr(getattr(pretty_errors.config, option)))
-
+            parameters.append(prefix(option) + repr(getattr(pretty_errors.config, option)))
+        parameters.append('\n' + indent + 'name = "custom"  # name it whatever you want')
         output.append(',\n'.join(parameters))
-        output.append('    )"""\n')
+        output.append('\n    )"""\n')
         output.append('### END PRETTY ERRORS\n')
         output = '\n'.join(output)
 

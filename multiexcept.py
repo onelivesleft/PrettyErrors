@@ -1,3 +1,5 @@
+import pretty_errors
+
 
 try:
     myval = [1,2]

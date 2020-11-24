@@ -1,11 +1,13 @@
 import sys, re, colorama, os, time, linecache
 colorama.init()
 output_stderr = sys.stderr
+terminal_is_interactive = sys.stderr.isatty()
 
 name = "pretty_errors"
+__version__ = "1.2.19"  # remember to update version in setup.py!
 
-_env_label = 'PYTHON_PRETTY_ERRORS'
-active = _env_label not in os.environ or os.environ[_env_label] != '0'
+active = 'PYTHON_PRETTY_ERRORS' not in os.environ or os.environ['PYTHON_PRETTY_ERRORS'] != '0'
+interactive_tty_only = 'PYTHON_PRETTY_ERRORS_ISATTY_ONLY' in os.environ and os.environ['PYTHON_PRETTY_ERRORS_ISATTY_ONLY'] != '0'
 
 
 FILENAME_COMPACT  = 0
@@ -51,6 +53,7 @@ config_paths = {}
 class PrettyErrorsConfig():
     def __init__(self, instance = None):
         if instance is None:
+            self.name                      = "default"
             self.line_length               = 0
             self.full_line_newline         = False
             self.filename_display          = FILENAME_COMPACT
@@ -103,6 +106,7 @@ class PrettyErrorsConfig():
             self.reset_stdout              = False
             self.show_suppressed           = False
         else:
+            self.name                      = instance.name
             self.line_length               = instance.line_length
             self.full_line_newline         = instance.full_line_newline
             self.filename_display          = instance.filename_display
@@ -161,6 +165,7 @@ class PrettyErrorsConfig():
 
     def copy(self):
         c = PrettyErrorsConfig()
+        c.name                      = self.name
         c.line_length               = self.line_length
         c.full_line_newline         = self.full_line_newline
         c.filename_display          = self.filename_display
@@ -253,6 +258,7 @@ def configure(
         local_len_color           = None,
         local_name_color          = None,
         local_value_color         = None,
+        name                      = None,
         postfix                   = None,
         prefix                    = None,
         reset_stdout              = None,
@@ -304,6 +310,7 @@ def configure(
         local_len_color           = local_len_color,
         local_name_color          = local_name_color,
         local_value_color         = local_value_color,
+        name                      = name,
         postfix                   = postfix,
         prefix                    = prefix,
         reset_stdout              = reset_stdout,
@@ -325,6 +332,7 @@ def mono():
     global RESET_COLOR
     RESET_COLOR = ''
     configure(
+        name                 = "mono",
         infix                = '\n---\n',
         line_number_first    = True,
         code_color           = '| ',
@@ -949,9 +957,10 @@ class StdErr():
 
 
 
-def replace_stderr():
+def replace_stderr(force = False):
     """Replace sys.stderr, for cases where standard use with activate() does not work."""
-    sys.stderr = StdErr()
+    if (force or not interactive_tty_only or terminal_is_interactive):
+        sys.stderr = StdErr()
 
 
 def activate():
@@ -959,7 +968,7 @@ def activate():
     sys.excepthook = excepthook
 
 
-if active:
+if active and (not interactive_tty_only or terminal_is_interactive):
     activate()
 
 
@@ -983,5 +992,4 @@ if __name__ == "__main__":
         myval = [1,2]
         print(myval[3])
     except:
-        print("First exception")
-        raise OSError
+        a = "C" * "B"

@@ -23,6 +23,8 @@ import pretty_errors
 ```
 Note you need to be running in a terminal capable of colour output in order to get colour output: in Windows this means powershell, cmder, etc.  If you must use a monochrome terminal then you can call the helper function `pretty_errors.mono()`, which will set some config options in a way that is useful for monochrome output.
 
+![Monochrome](https://raw.githubusercontent.com/onelivesleft/PrettyErrors/master/exampleMono.png)
+
 If you want to configure the output then use `pretty_errors.configure()`, `pretty_errors.whitelist()`, `pretty_errors.blacklist()`, `pretty_errors.pathed_config()`.  For example:
 ```python
 import pretty_errors
@@ -75,20 +77,45 @@ pretty_errors.pathed_config(meh, 'c:/python')
 
 ---
 
-##### Environment Variable
+##### Environment Variables
 
-You may temporarily disable `pretty_errors` by setting the environment variable `PYTHON_PRETTY_ERRORS` to `0`.  i.e. at a command prompt:
+* PYTHON_PRETTY_ERRORS<br>
+You may disable `pretty_errors` by setting the environment variable `PYTHON_PRETTY_ERRORS` to `0`.  i.e. at a command prompt:
 ```bash
 set PYTHON_PRETTY_ERRORS=0
 ```
 
 Calling `pretty_errors.activate()` will override this.
 
+If you wish to selectively utilize `pretty_errors`, then use the above, and in your code perform your calculation to determine whether or not to call `pretty_errors.activate()`.
+
+* PYTHON_PRETTY_ERRORS_ISATTY_ONLY<br>
+It may be desirable to disable `pretty_errors` when you are redirecting output to a file (to keep error logs, for instance).  If you wish to do so, then setting `PYTHON_PRETTY_ERRORS_ISATTY_ONLY` to non-zero will cause `pretty_errors` to check if it is running in an interactive terminal, and only activate if so.
+
+```bash
+set PYTHON_PRETTY_ERRORS_ISATTY_ONLY=1
+```
+
+Setting this will disable `replace_stderr()` in the same situations, unless you call it with the `force` parameter: `replace_stderr(force=True)`.
+
+Calling `pretty_errors.activate()` will override this.
+
+You may check `pretty_errors.terminal_is_interactive` to see if the terminal is interactive (`pretty_errors` sets this by checking `sys.stderr.isatty()`).  You can use this to select a different config.  For example:
+
+```python
+if not pretty_errors.terminal_is_interactive:
+    pretty_errors.mono()
+```
+
+
 ---
 
 ##### Configuration settings:
 
 Configuration settings are stored in `pretty_errors.config`, though should be set using `pretty_errors.configure()`.  A reference for the default config is stored in `pretty_errors.default_config`.
+
+* `name`<br>
+Optional field to store config name in.
 
 * `line_length`<br>
 Output will be wrapped at this point.  If set to `0` (which is the default) it will automatically match your console width.
