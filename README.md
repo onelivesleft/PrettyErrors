@@ -53,7 +53,7 @@ Sometimes it will be impossible for `pretty_errors` to utilize `sys.excepthook`:
 ```python
 pretty_errors.replace_stderr()
 ```
-Note that this will lose some functionality, since `pretty_errors` will only have access to what is being output on screen, rather then the entire stack trace.
+Note that this will lose some functionality, since `pretty_errors` will only have access to what is being output on screen, rather then the entire stack trace.  A good API will generally have a way to interact with the exception stack, which will allow for using `excepthook`: `replace_stderr` should be the last resort.  [See this comment for an example](https://github.com/onelivesleft/PrettyErrors/issues/16#issuecomment-751463605)
 
 ---
 
