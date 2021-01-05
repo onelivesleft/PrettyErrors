@@ -393,9 +393,17 @@ class ExceptionWriter():
     def get_terminal_width(self):
         """Width of terminal in characters."""
         try:
-            return os.get_terminal_size()[0]
+            default = int(os.environ['COLUMNS'])
+            assert default != 0
+        except (ValueError, KeyError, AssertionError):
+            default = 79
+
+        try:
+            rv = os.get_terminal_size()[0]
+            assert rv != 0
+            return rv
         except Exception:
-            return 79
+            return default
 
 
     def get_line_length(self):
