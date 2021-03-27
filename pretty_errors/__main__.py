@@ -209,8 +209,6 @@ except ImportError:
         '  Please remove its section from file:\\n ' + __file__ + '\\n'
     )
 else:
-    pass
-
     # Use if you do not have a color terminal:
     #pretty_errors.mono()
 
@@ -229,7 +227,7 @@ else:
     #pretty_errors.pathed_config(alternate_config, '/use/alternate/for/this/path')
 
     # Use to configure output:  Uncomment each line to change that setting.
-    """pretty_errors.configure(
+    pretty_errors.configure(
     ''' % pretty_errors.__version__)
 
         options = []
@@ -259,7 +257,7 @@ else:
             parameters.append(prefix(option) + repr(getattr(pretty_errors.config, option)))
         parameters.append('\n' + indent + 'name = "custom"  # name it whatever you want')
         output.append(',\n'.join(parameters))
-        output.append('\n    )"""\n')
+        output.append('\n    )\n')
         output.append('### END PRETTY ERRORS\n')
         output = '\n'.join(output)
 
