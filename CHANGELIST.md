@@ -1,3 +1,8 @@
+# v1.2.20
+
+* Added `ExceptionWriter.write_link`
+
+
 # v1.2.19
 
 * Fixed line number discrepancies in example image, added example image for `mono()` mode.

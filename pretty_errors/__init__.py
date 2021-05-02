@@ -4,7 +4,7 @@ output_stderr = sys.stderr
 terminal_is_interactive = sys.stderr.isatty()
 
 name = "pretty_errors"
-__version__ = "1.2.19"  # remember to update version in setup.py!
+__version__ = "1.2.20"  # remember to update version in setup.py!
 
 active = 'PYTHON_PRETTY_ERRORS' not in os.environ or os.environ['PYTHON_PRETTY_ERRORS'] != '0'
 interactive_tty_only = 'PYTHON_PRETTY_ERRORS_ISATTY_ONLY' in os.environ and os.environ['PYTHON_PRETTY_ERRORS_ISATTY_ONLY'] != '0'
@@ -491,7 +491,17 @@ class ExceptionWriter():
                     self.config.function_color,    function
                 ])
         if self.config.display_link:
-            self.output_text([self.config.link_color, '"%s", line %s' % (path, line)])
+            self.write_link(path, line)
+
+
+    def write_link(self, filepath, line):
+        """Write link of location to screen.  Default version is clickable in VSCode.
+
+        Should make use of:
+            self.config.link_color
+        """
+
+        self.output_text([self.config.link_color, '"%s", line %s' % (filepath, line)])
 
 
     def write_code(self, filepath, line, module_globals, is_final, point_at = None):
