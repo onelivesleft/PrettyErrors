@@ -1,3 +1,8 @@
+# v1.2.21
+
+* Fixed problem installing into paths with `\` in them.
+
+
 # v1.2.20
 
 * Added `ExceptionWriter.write_link`
