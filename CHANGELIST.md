@@ -1,3 +1,8 @@
+# v1.2.22
+
+* Fixed problem installing into virtualenv paths.
+
+
 # v1.2.21
 
 * Fixed problem installing into paths with `\` in them.
