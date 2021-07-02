@@ -1,3 +1,8 @@
+# v1.2.23
+
+* Fixed problem installing into virtualenv paths.
+
+
 # v1.2.22
 
 * Fixed problem installing into virtualenv paths.
