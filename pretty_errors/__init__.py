@@ -4,7 +4,7 @@ output_stderr = sys.stderr
 terminal_is_interactive = sys.stderr.isatty()
 
 name = "pretty_errors"
-__version__ = "1.2.23"  # remember to update version in setup.py!
+__version__ = "1.2.24"  # remember to update version in setup.py!
 
 active = 'PYTHON_PRETTY_ERRORS' not in os.environ or os.environ['PYTHON_PRETTY_ERRORS'] != '0'
 interactive_tty_only = 'PYTHON_PRETTY_ERRORS_ISATTY_ONLY' in os.environ and os.environ['PYTHON_PRETTY_ERRORS_ISATTY_ONLY'] != '0'
@@ -393,14 +393,15 @@ class ExceptionWriter():
     def get_terminal_width(self):
         """Width of terminal in characters."""
         try:
-            return os.get_terminal_size()[0]
+            width = os.get_terminal_size()[0]
+            return 79 if width <= 0 else width
         except Exception:
             return 79
 
 
     def get_line_length(self):
         """Calculated line length."""
-        if self.config.line_length == 0:
+        if self.config.line_length <= 0:
             return self.get_terminal_width()
         else:
             return self.config.line_length

@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pretty_errors",
-    version="1.2.23", # remember to also update __version__ in __init__.py!
+    version="1.2.24", # remember to also update __version__ in __init__.py!
     author="Iain King",
     author_email="iain.king@gmail.com",
     description="Prettifies Python exception output to make it legible.",
