@@ -39,9 +39,14 @@ else:
     # in virtualenv, `site` has no attribute `getsitepackages` or `getusersitepackages`
     if in_virtualenv:
         def getsitepackages():
-            sep = "\\\\" if os.path.sep == "\\" else os.path.sep
-            pattern1 = re.compile(r'^%s$' % sep.join([os.environ['VIRTUAL_ENV'], 'lib', 'python[0-9.]+', 'site-packages']))
-            pattern2 = re.compile(r'^%s$' % sep.join([os.environ['VIRTUAL_ENV'], 'lib', 'site-packages']))
+            if os.path.sep == "\\":
+                sep = "\\\\"
+                env_path = os.environ['VIRTUAL_ENV'].replace("\\", "\\\\")
+            else:
+                sep = os.path.sep
+                env_path = os.environ['VIRTUAL_ENV']
+            pattern1 = re.compile(r'^%s$' % sep.join([env_path, 'lib', 'python[0-9.]+', 'site-packages']))
+            pattern2 = re.compile(r'^%s$' % sep.join([env_path, 'lib', 'site-packages']))
             paths = [path for path in set(sys.path) if pattern1.search(path) or pattern2.search(path)]
             return paths
 

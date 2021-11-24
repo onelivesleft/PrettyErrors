@@ -1,3 +1,8 @@
+# v1.2.25
+
+* Fixed problem installing into virtualenv paths.
+
+
 # v1.2.24
 
 * Fixed problem when running in container which reports a terminal width of 0
