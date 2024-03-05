@@ -2,7 +2,7 @@ import pretty_errors
 
 
 try:
-    myval = [1,2]
+    myval = [1, 2]
     print(myval[3])
 except:
     try:
