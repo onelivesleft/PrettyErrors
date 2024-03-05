@@ -13,7 +13,7 @@ This is the recommended way to use `pretty_errors`; apart from being simpler and
 
 ---
 
-![Example](https://raw.githubusercontent.com/onelivesleft/PrettyErrors/master/example.png)
+![Example](https://raw.githubusercontent.com/onelivesleft/PrettyErrors/master/assets/example.png)
 
 ---
 
@@ -23,7 +23,7 @@ import pretty_errors
 ```
 Note you need to be running in a terminal capable of colour output in order to get colour output: in Windows this means powershell, cmder, etc.  If you must use a monochrome terminal then you can call the helper function `pretty_errors.mono()`, which will set some config options in a way that is useful for monochrome output.
 
-![Monochrome](https://raw.githubusercontent.com/onelivesleft/PrettyErrors/master/exampleMono.png)
+![Monochrome](https://raw.githubusercontent.com/onelivesleft/PrettyErrors/master/assets/exampleMono.png)
 
 If you want to configure the output then use `pretty_errors.configure()`, `pretty_errors.whitelist()`, `pretty_errors.blacklist()`, `pretty_errors.pathed_config()`.  For example:
 ```python
@@ -43,7 +43,7 @@ pretty_errors.configure(
 pretty_errors.blacklist('c:/python')
 ```
 
-![Result](https://raw.githubusercontent.com/onelivesleft/PrettyErrors/master/example2.png)
+![Result](https://raw.githubusercontent.com/onelivesleft/PrettyErrors/master/assets/example2.png)
 
 ---
 
